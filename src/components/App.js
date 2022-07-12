@@ -23,16 +23,19 @@ class App extends React.Component {
         return this.state.monsters.map((m, i) => { return <Grid.Column key={i}><Monster monster={m} /></Grid.Column> });
     }
 
+    // TODO:
+    // Add a search bar
+    // Add the ability to add custom descriptors to monsters
+    // Add ability to modify amount of health
+    // Add current condition effects to monster
+
     render() {
         return (
             <div style={{ marginTop: 10}}>
                 <Container textAlign='center' fluid>
                     <Header as='h2'>Battle Planner</Header>
                     <Grid relaxed padded columns={4}>
-                    {/* <Card.Group> */}
                         {this.monsters()}
-
-                    {/* </Card.Group> */}
                     </Grid>
                 </Container>
             </div>
