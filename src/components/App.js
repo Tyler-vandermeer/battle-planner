@@ -7,7 +7,7 @@ import dnd5e from '../api/dnd5e';
 class App extends React.Component {
     state = { monsters: [], searchOptions: [] };
 
-    getMonsterData = async (monsterName) => {
+    addMonster = async (monsterName) => {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
         this.setState({ monsters: [response.data, ...this.state.monsters] });
     }
@@ -17,17 +17,25 @@ class App extends React.Component {
         this.setState({ searchOptions: response.data.results.map((m) => { return { key: m.index, value: m.index, text: m.name } }) });
     }
 
+    init = async () => {
+        await this.addMonster('goblin');
+        await this.addMonster('goblin');
+        await this.addMonster('goblin');
+        await this.addMonster('aboleth');
+        await this.addMonster('goblin');
+    }
+
     componentDidMount() {
-        this.getMonsterData('goblin');
-        this.getMonsterData('goblin');
-        this.getMonsterData('goblin');
-        this.getMonsterData('goblin');
-        this.getMonsterData('goblin');
+        this.init()
         this.loadMonsters();
     }
 
     monsters = () => {
         return this.state.monsters.map((m, i) => { return <Grid.Column key={i}><Monster monster={m} /></Grid.Column> });
+    }
+
+    handleSearchSubmit = (monsterName) => {
+        this.addMonster(monsterName);
     }
 
     // TODO:
@@ -40,8 +48,8 @@ class App extends React.Component {
             <div>
                 <Container textAlign='center' fluid>
                     <Header as='h2'>Battle Planner</Header>
-                    <SearchBar options={this.state.searchOptions} />
-                    <Grid relaxed padded columns={4}>
+                    <SearchBar options={this.state.searchOptions} onSubmit={this.handleSearchSubmit} />
+                    <Grid relaxed padded columns={3}>
                         {this.monsters()}
                     </Grid>
                 </Container>
