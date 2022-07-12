@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Header, Grid, Card } from 'semantic-ui-react';
 import Monster from './Monster';
 import dnd5e from '../api/dnd5e';
 
@@ -7,7 +8,7 @@ class App extends React.Component {
 
     getMonsterData = async (monsterName) => {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
-        this.setState({ monsters: [response.data, ...this.state.monsters]  });
+        this.setState({ monsters: [response.data, ...this.state.monsters] });
     }
 
     componentDidMount() {
@@ -19,15 +20,21 @@ class App extends React.Component {
     }
 
     monsters = () => {
-        return this.state.monsters.map((m, i) => { return <Monster key={i} monster={m}/>});
+        return this.state.monsters.map((m, i) => { return <Grid.Column key={i}><Monster monster={m} /></Grid.Column> });
     }
 
     render() {
         return (
-            <div className='ui container'>
-                <div className='ui stackable grid container'>
-                    {this.monsters()}
-                </div>
+            <div style={{ marginTop: 10}}>
+                <Container textAlign='center' fluid>
+                    <Header as='h2'>Battle Planner</Header>
+                    <Grid relaxed padded columns={4}>
+                    {/* <Card.Group> */}
+                        {this.monsters()}
+
+                    {/* </Card.Group> */}
+                    </Grid>
+                </Container>
             </div>
         )
     };
