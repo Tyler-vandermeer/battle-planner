@@ -3,3 +3,16 @@
     height: 500px;
     overflow-y: scroll;
 }
+
+.monsterTable {
+    border: none !important;
+    width: 80% !important;
+    margin: auto !important;
+    text-align: center !important;
+}
+
+.monsterTable td {
+    margin: 0;
+    padding: 0 !important;
+    border: none !important;
+}

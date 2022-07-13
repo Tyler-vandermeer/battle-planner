@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Divider, Header } from 'semantic-ui-react';
+import { Card, Divider, Header, Table } from 'semantic-ui-react';
 import ContentLine from './ContentLine';
 
 const getMonsterCharacteristics = (monster) => {
@@ -46,17 +46,45 @@ const Monster = (props) => {
                 <Card.Meta>{getMonsterCharacteristics(props.monster)}</Card.Meta>
             </Card.Content>
             <Card.Content>
-                <ContentLine label="Armor Class" value={props.monster.armor_class} />
-                <ContentLine label="Hit Points" value={props.monster.hit_points} />
-                <ContentLine label="Speed" value={props.monster.speed?.walk} />
+                <Table className='monsterTable'>
+                    <Table.Row>
+                        <Table.Cell>
+                            <ContentLine label="AC" value={props.monster.armor_class} />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <ContentLine label="HP" value={props.monster.hit_points} />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <ContentLine label="Speed" value={props.monster.speed?.walk} />
+                        </Table.Cell>
+                    </Table.Row>
+                </Table>
             </Card.Content>
             <Card.Content>
-                <ContentLine label="STR" value={props.monster.strength} />
-                <ContentLine label="DEX" value={props.monster.dexterity} />
-                <ContentLine label="CON" value={props.monster.constitution} />
-                <ContentLine label="INT" value={props.monster.intelligence} />
-                <ContentLine label="WIS" value={props.monster.wisdom} />
-                <ContentLine label="CHA" value={props.monster.charisma} />
+                <Table className='monsterTable'>
+                    <Table.Row>
+                        <Table.Cell>
+                            <ContentLine label="STR" value={props.monster.strength} />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <ContentLine label="DEX" value={props.monster.dexterity} />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <ContentLine label="CON" value={props.monster.constitution} />
+                        </Table.Cell>
+                    </Table.Row>
+                    <Table.Row>
+                        <Table.Cell>
+                            <ContentLine label="INT" value={props.monster.intelligence} />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <ContentLine label="WIS" value={props.monster.wisdom} />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <ContentLine label="CHA" value={props.monster.charisma} />
+                        </Table.Cell>
+                    </Table.Row>
+                </Table>
             </Card.Content>
             <Card.Content>
                 <ContentLine label="Skills" value={getProficiencies(props.monster)} />
