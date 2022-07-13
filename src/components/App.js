@@ -9,7 +9,11 @@ class App extends React.Component {
 
     addMonster = async (monsterName) => {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
-        this.setState({ monsters: [response.data, ...this.state.monsters] });
+        this.setState({ monsters: [{ id: this.getMonsterIndex(response.data.index), monster: response.data}, ...this.state.monsters] });
+    }
+
+    getMonsterIndex = (monsterIndex) => {
+        return monsterIndex + this.state.monsters.filter(x => x.monster.index === monsterIndex).length;
     }
 
     loadMonsters = async () => {
@@ -31,16 +35,21 @@ class App extends React.Component {
     }
 
     monsters = () => {
-        return this.state.monsters.map((m, i) => { return <Grid.Column key={i}><Monster monster={m} /></Grid.Column> });
+        return this.state.monsters.map((m, i) => { return <Grid.Column key={i}><Monster data={m} handleRemoveMonster={this.handleRemoveMonster} /></Grid.Column> });
     }
 
     handleSearchSubmit = (monsterName) => {
         this.addMonster(monsterName);
     }
 
+    handleRemoveMonster = (id) => {
+        this.setState({ monsters: this.state.monsters.filter(x => x.id !== id)});
+    }
+
     // TODO:
-    // Add the ability to add custom descriptors to monsters
+    // add remove monster button
     // Add ability to modify amount of health
+    // Add the ability to add custom descriptors to monsters
     // Add current condition effects to monster
 
     render() {
