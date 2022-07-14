@@ -47,7 +47,6 @@ class App extends React.Component {
     }
 
     // TODO:
-    // add remove monster button
     // Add ability to modify amount of health
     // Add the ability to add custom descriptors to monsters
     // Add current condition effects to monster

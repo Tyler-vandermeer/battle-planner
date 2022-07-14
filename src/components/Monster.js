@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Divider, Header, Table, Icon } from 'semantic-ui-react';
+import { Card, Divider, Header, Icon } from 'semantic-ui-react';
 import ContentLine from './ContentLine';
+import InfoTable from './InfoTable';
 
 const getMonsterCharacteristics = (monster) => {
     return `${monster.size} ${monster.type} ${monster.subtype === undefined ? '' : `(${monster.subtype})`}${monster.alignment}`;
@@ -45,6 +46,28 @@ const Monster = (props) => {
         props.handleRemoveMonster(props.data.id)
     }
 
+    const statRows = {
+        r1: [
+            [
+                { label: 'AC', value: monster.armor_class },
+                { label: 'HP', value: monster.hit_points },
+                { label: 'Speed', value: monster.speed?.walk }
+            ]
+        ],
+        r2: [
+            [
+                { label: 'STR', value: monster.strength },
+                { label: 'DEX', value: monster.dexterity },
+                { label: 'CON', value: monster.constitution },
+            ],
+            [
+                { label: 'INT', value: monster.intelligence },
+                { label: 'WIS', value: monster.wisdom },
+                { label: 'CHA', value: monster.charisma },
+            ]
+        ]
+    }
+
     return (
         <Card>
             <Card.Content>
@@ -55,49 +78,10 @@ const Monster = (props) => {
                 <Card.Meta>{getMonsterCharacteristics(monster)}</Card.Meta>
             </Card.Content>
             <Card.Content>
-                <Table className='monsterTable'>
-                    <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>
-                                <ContentLine label="AC" value={monster.armor_class} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="HP" value={monster.hit_points} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="Speed" value={monster.speed?.walk} />
-                            </Table.Cell>
-                        </Table.Row>
-                    </Table.Body>
-                </Table>
+                <InfoTable rows={statRows.r1} />
             </Card.Content>
             <Card.Content>
-                <Table className='monsterTable'>
-                    <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>
-                                <ContentLine label="STR" value={monster.strength} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="DEX" value={monster.dexterity} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="CON" value={monster.constitution} />
-                            </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>
-                                <ContentLine label="INT" value={monster.intelligence} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="WIS" value={monster.wisdom} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="CHA" value={monster.charisma} />
-                            </Table.Cell>
-                        </Table.Row>
-                    </Table.Body>
-                </Table>
+                <InfoTable rows={statRows.r2} />
             </Card.Content>
             <Card.Content>
                 <ContentLine label="Skills" value={getProficiencies(monster)} />
