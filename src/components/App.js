@@ -30,7 +30,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        this.init()
+        this.init();
         this.loadMonsters();
     }
 
@@ -47,10 +47,13 @@ class App extends React.Component {
     }
 
     // TODO:
-    // add remove monster button
+    // Add component for editable field for changing stats
+    // Have some of them be able to be temprary additions (modifiers)
+    // Add spot for iniative
     // Add ability to modify amount of health
     // Add the ability to add custom descriptors to monsters
     // Add current condition effects to monster
+    // maybe make descriptions of abilities tool tips
 
     render() {
         return (
