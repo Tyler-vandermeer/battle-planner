@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Divider, Header, Icon } from 'semantic-ui-react';
+import { Card, Divider, Header, Icon, Table } from 'semantic-ui-react';
 import ContentLine from './ContentLine';
 import InfoTable from './InfoTable';
 
@@ -46,6 +46,11 @@ const Monster = (props) => {
         props.handleRemoveMonster(props.data.id)
     }
 
+    const getModifierValue = value => {
+        let mod = Math.floor((value - 10) / 2)
+        return `${mod > 0 ? '+' : ''}${mod}`
+    };
+
     const statRows = {
         r1: [
             [
@@ -78,10 +83,49 @@ const Monster = (props) => {
                 <Card.Meta>{getMonsterCharacteristics(monster)}</Card.Meta>
             </Card.Content>
             <Card.Content>
-                <InfoTable rows={statRows.r1} />
+                <Table className='monsterTable'>
+                    <Table.Body>
+                        <Table.Row>
+                            <Table.Cell>
+                                <ContentLine label="AC" value={monster.armor_class} />
+                            </Table.Cell>
+                            <Table.Cell>
+                                <ContentLine label="HP" value={monster.hit_points} />
+                            </Table.Cell>
+                            <Table.Cell>
+                                <ContentLine label="Speed" value={monster.speed?.walk} />
+                            </Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+                </Table>
             </Card.Content>
             <Card.Content>
-                <InfoTable rows={statRows.r2} />
+                <Table className='monsterTable'>
+                    <Table.Body>
+                        <Table.Row>
+                            <Table.Cell>
+                                <div><b>STR:</b> {monster.strength} ({getModifierValue(monster.strength)})</div>
+                            </Table.Cell>
+                            <Table.Cell>
+                                <div><b>DEX:</b> {monster.dexterity} ({getModifierValue(monster.dexterity)})</div>
+                            </Table.Cell>
+                            <Table.Cell>
+                                <div><b>CON:</b> {monster.constitution} ({getModifierValue(monster.constitution)})</div>
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>
+                                <div><b>INT:</b> {monster.intelligence} ({getModifierValue(monster.intelligence)})</div>
+                            </Table.Cell>
+                            <Table.Cell>
+                                <div><b>WIS:</b> {monster.wisdom} ({getModifierValue(monster.wisdom)})</div>
+                            </Table.Cell>
+                            <Table.Cell>
+                                <div><b>CHA:</b> {monster.charisma} ({getModifierValue(monster.charisma)})</div>
+                            </Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+                </Table>
             </Card.Content>
             <Card.Content>
                 <ContentLine label="Skills" value={getProficiencies(monster)} />
