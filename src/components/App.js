@@ -23,10 +23,10 @@ class App extends React.Component {
 
     init = async () => {
         await this.addMonster('aboleth');
-        await this.addMonster('goblin');
-        await this.addMonster('goblin');
-        await this.addMonster('goblin');
-        await this.addMonster('goblin');
+        // await this.addMonster('goblin');
+        // await this.addMonster('goblin');
+        // await this.addMonster('goblin');
+        // await this.addMonster('goblin');
     }
 
     componentDidMount() {
@@ -49,7 +49,6 @@ class App extends React.Component {
     // TODO:
     // Add component for editable field for changing stats
     // Have some of them be able to be temprary additions (modifiers)
-    // Add spot for iniative
     // Add the ability to add custom descriptors to monsters
     // Add current condition effects to monster
     // maybe make descriptions of abilities tool tips
