@@ -1,5 +1,5 @@
-import React from 'react';
-import { Card, Divider, Header, Icon, Table } from 'semantic-ui-react';
+import React, { useState, useEffect } from 'react';
+import { Card, Divider, Header, Icon, Table, Progress, Button, Form } from 'semantic-ui-react';
 import ContentLine from './ContentLine';
 import InfoTable from './InfoTable';
 
@@ -40,6 +40,9 @@ const getActions = (monster) => {
 }
 
 const Monster = (props) => {
+    const [currentHealth, setCurrentHealth] = useState(props.data.monster.hit_points);
+    useEffect(() => { setCurrentHealth(props.data.monster.hit_points) }, [props.data.monster.hit_points]);
+
     const monster = props.data.monster;
 
     const onXClick = (ev) => {
@@ -51,27 +54,36 @@ const Monster = (props) => {
         return `${mod > 0 ? '+' : ''}${mod}`
     };
 
-    const statRows = {
-        r1: [
-            [
-                { label: 'AC', value: monster.armor_class },
-                { label: 'HP', value: monster.hit_points },
-                { label: 'Speed', value: monster.speed?.walk }
-            ]
-        ],
-        r2: [
-            [
-                { label: 'STR', value: monster.strength },
-                { label: 'DEX', value: monster.dexterity },
-                { label: 'CON', value: monster.constitution },
-            ],
-            [
-                { label: 'INT', value: monster.intelligence },
-                { label: 'WIS', value: monster.wisdom },
-                { label: 'CHA', value: monster.charisma },
-            ]
-        ]
+    const handleHealthChange = (ev) => {
+
+
+        setCurrentHealth((previous) => {
+            const newValue = previous + ~~ev.target.value;
+            return newValue > monster.hit_points ? monster.hit_points : newValue;
+        });
     }
+
+    // const statRows = {
+    //     r1: [
+    //         [
+    //             { label: 'AC', value: monster.armor_class },
+    //             { label: 'HP', value: monster.hit_points },
+    //             { label: 'Speed', value: monster.speed?.walk }
+    //         ]
+    //     ],
+    //     r2: [
+    //         [
+    //             { label: 'STR', value: monster.strength },
+    //             { label: 'DEX', value: monster.dexterity },
+    //             { label: 'CON', value: monster.constitution },
+    //         ],
+    //         [
+    //             { label: 'INT', value: monster.intelligence },
+    //             { label: 'WIS', value: monster.wisdom },
+    //             { label: 'CHA', value: monster.charisma },
+    //         ]
+    //     ]
+    // }
 
     return (
         <Card>
@@ -86,11 +98,17 @@ const Monster = (props) => {
                 <Table className='monsterTable'>
                     <Table.Body>
                         <Table.Row>
+                            <Table.Cell colSpan='3'>
+                                <div className='healthBar'>
+                                    <Button onClick={handleHealthChange} value={-1}>-</Button>
+                                    <Progress value={currentHealth} total={monster.hit_points} progress='ratio' color='green' />
+                                    <Button onClick={handleHealthChange} value={1}>+</Button>
+                                </div>
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
                             <Table.Cell>
                                 <ContentLine label="AC" value={monster.armor_class} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="HP" value={monster.hit_points} />
                             </Table.Cell>
                             <Table.Cell>
                                 <ContentLine label="Speed" value={monster.speed?.walk} />

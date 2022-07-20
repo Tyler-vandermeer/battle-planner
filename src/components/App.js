@@ -22,10 +22,10 @@ class App extends React.Component {
     }
 
     init = async () => {
-        await this.addMonster('goblin');
-        await this.addMonster('goblin');
-        await this.addMonster('goblin');
         await this.addMonster('aboleth');
+        await this.addMonster('goblin');
+        await this.addMonster('goblin');
+        await this.addMonster('goblin');
         await this.addMonster('goblin');
     }
 
@@ -35,7 +35,7 @@ class App extends React.Component {
     }
 
     monsters = () => {
-        return this.state.monsters.map((m, i) => { return <Grid.Column key={i}><Monster data={m} handleRemoveMonster={this.handleRemoveMonster} /></Grid.Column> });
+        return this.state.monsters.map((m, i) => { return <Grid.Column key={i}><Monster key={i} data={m} handleRemoveMonster={this.handleRemoveMonster} /></Grid.Column> });
     }
 
     handleSearchSubmit = (monsterName) => {
@@ -50,7 +50,6 @@ class App extends React.Component {
     // Add component for editable field for changing stats
     // Have some of them be able to be temprary additions (modifiers)
     // Add spot for iniative
-    // Add ability to modify amount of health
     // Add the ability to add custom descriptors to monsters
     // Add current condition effects to monster
     // maybe make descriptions of abilities tool tips
@@ -59,7 +58,7 @@ class App extends React.Component {
         return (
             <div>
                 <Container textAlign='center' fluid>
-                    <Header as='h2'>Battle Planner</Header>
+                    <Header as='h2'>Battle Tracker</Header>
                     <SearchBar options={this.state.searchOptions} onSubmit={this.handleSearchSubmit} />
                     <Grid relaxed padded columns={3}>
                         {this.monsters()}
