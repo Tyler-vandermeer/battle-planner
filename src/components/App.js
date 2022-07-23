@@ -23,14 +23,15 @@ class App extends React.Component {
 
     init = async () => {
         await this.addMonster('aboleth');
-        // await this.addMonster('goblin');
-        // await this.addMonster('goblin');
-        // await this.addMonster('goblin');
-        // await this.addMonster('goblin');
+        await this.addMonster('goblin');
+        await this.addMonster('goblin');
+        await this.addMonster('goblin');
+        await this.addMonster('goblin');
     }
 
     componentDidMount() {
-        this.init();
+        if (process.env.NODE_ENV !== 'production')
+            this.init();
         this.loadMonsters();
     }
 
