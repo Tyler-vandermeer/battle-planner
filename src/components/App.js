@@ -48,6 +48,7 @@ class App extends React.Component {
     }
 
     // TODO:
+    // Fix the page title
     // Make it look not like ass on mobile
     // Add component for editable field for changing stats
     // Have some of them be able to be temprary additions (modifiers)
@@ -56,6 +57,7 @@ class App extends React.Component {
     // maybe make descriptions of abilities tool tips
     // Add side panels that will hold PCs
     // add tool tips for spells
+    // Add desc tooltip for the monster
 
     render() {
         return (
