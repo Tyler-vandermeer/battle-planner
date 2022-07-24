@@ -51,6 +51,9 @@ const Monster = (props) => {
     const [currentHealth, setCurrentHealth] = useState(props.data.monster.hit_points);
     useEffect(() => { setCurrentHealth(props.data.monster.hit_points) }, [props.data.monster.hit_points]);
 
+    const [Iniative, setIniative] = useState(0);
+    useEffect(() => { setIniative(rollIniative()) }, []);
+
     const monster = props.data.monster;
 
     const onXClick = (ev) => {
@@ -72,28 +75,6 @@ const Monster = (props) => {
     }
 
     const rollIniative = () => Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
-
-    // const statRows = {
-    //     r1: [
-    //         [
-    //             { label: 'AC', value: monster.armor_class },
-    //             { label: 'HP', value: monster.hit_points },
-    //             { label: 'Speed', value: monster.speed?.walk }
-    //         ]
-    //     ],
-    //     r2: [
-    //         [
-    //             { label: 'STR', value: monster.strength },
-    //             { label: 'DEX', value: monster.dexterity },
-    //             { label: 'CON', value: monster.constitution },
-    //         ],
-    //         [
-    //             { label: 'INT', value: monster.intelligence },
-    //             { label: 'WIS', value: monster.wisdom },
-    //             { label: 'CHA', value: monster.charisma },
-    //         ]
-    //     ]
-    // }
 
     return (
         <Card>
@@ -121,7 +102,7 @@ const Monster = (props) => {
                                 <ContentLine label="AC" value={monster.armor_class} />
                             </Table.Cell>
                             <Table.Cell>
-                                <ContentLine label="Iniative" value={rollIniative()} />
+                                <ContentLine label="Iniative" value={Iniative} />
                             </Table.Cell>
                             <Table.Cell>
                                 {getMovementValues(monster)}

@@ -48,11 +48,16 @@ class App extends React.Component {
     }
 
     // TODO:
+    // Fix the page title
+    // Make it look not like ass on mobile
     // Add component for editable field for changing stats
     // Have some of them be able to be temprary additions (modifiers)
     // Add the ability to add custom descriptors to monsters
     // Add current condition effects to monster
     // maybe make descriptions of abilities tool tips
+    // Add side panels that will hold PCs
+    // add tool tips for spells
+    // Add desc tooltip for the monster
 
     render() {
         return (
@@ -60,7 +65,7 @@ class App extends React.Component {
                 <Container textAlign='center' fluid>
                     <Header as='h2'>Battle Tracker</Header>
                     <SearchBar options={this.state.searchOptions} onSubmit={this.handleSearchSubmit} />
-                    <Grid relaxed padded columns={3}>
+                    <Grid relaxed stackable padded columns={3}>
                         {this.monsters()}
                     </Grid>
                 </Container>
