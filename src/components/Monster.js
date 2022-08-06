@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Divider, Header, Icon, Table, Progress, Button, Input, Form } from 'semantic-ui-react';
+import { Card, Divider, Header, Icon, Table, Progress, Button } from 'semantic-ui-react';
 import ContentLine from './ContentLine';
-import InfoTable from './InfoTable';
 
 const getMonsterCharacteristics = (monster) => {
     return `${monster.size} ${monster.type} ${monster.subtype === undefined ? '' : `(${monster.subtype})`}${monster.alignment}`;
@@ -41,30 +40,43 @@ const getActions = (monster) => {
 
 const getMovementValues = (monster) => {
     const content = [];
-    for(let k in monster.speed) {
+    for (let k in monster.speed) {
         content.push(<ContentLine key={k} label={k} value={monster.speed[k]} />);
     }
     return content;
+}
+
+const getModifierValue = (value) => Math.floor((value - 10) / 2);
+
+const getModifierString = (value) => {
+    const mod = getModifierValue(value)
+    return `${value} (${mod > 0 ? '+' : ''}${mod})`
 }
 
 const Monster = (props) => {
     const [currentHealth, setCurrentHealth] = useState(props.data.monster.hit_points);
     useEffect(() => { setCurrentHealth(props.data.monster.hit_points) }, [props.data.monster.hit_points]);
 
-    const [Iniative, setIniative] = useState(0);
-    useEffect(() => { setIniative(rollIniative()) }, []);
-
     const monster = props.data.monster;
+
+    const iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
+    const movementValues = getMovementValues(monster);
+    const proficiencies = getProficiencies(monster);
+    const senses = getSenses(monster);
+    const specialAbilities = getSpecialAbilities(monster);
+    const actions = getActions(monster);
+
+    const modifiers = {
+        str: getModifierString(monster.strength),
+        dex: getModifierString(monster.dexterity),
+        con: getModifierString(monster.constitution),
+        int: getModifierString(monster.intelligence),
+        wis: getModifierString(monster.wisdom),
+        cha: getModifierString(monster.charisma)
+    }
 
     const onXClick = (ev) => {
         props.handleRemoveMonster(props.data.id)
-    }
-
-    const getModifierValue = (value) => Math.floor((value - 10) / 2);
-
-    const getModifierString = (value) =>{
-        const mod = getModifierValue(value)
-        return `${value} (${mod > 0 ? '+' : ''}${mod})`
     }
 
     const handleHealthChange = (ev) => {
@@ -73,8 +85,6 @@ const Monster = (props) => {
             return newValue > monster.hit_points ? monster.hit_points : newValue;
         });
     }
-
-    const rollIniative = () => Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
 
     return (
         <Card>
@@ -86,7 +96,7 @@ const Monster = (props) => {
                 <Card.Meta>{getMonsterCharacteristics(monster)}</Card.Meta>
             </Card.Content>
             <Card.Content>
-                <Table className='monsterTable'>
+                <Table unstackable className='monsterTable'>
                     <Table.Body>
                         <Table.Row>
                             <Table.Cell colSpan='3'>
@@ -102,54 +112,54 @@ const Monster = (props) => {
                                 <ContentLine label="AC" value={monster.armor_class} />
                             </Table.Cell>
                             <Table.Cell>
-                                <ContentLine label="Iniative" value={Iniative} />
+                                <ContentLine label="Iniative" value={iniative} />
                             </Table.Cell>
                             <Table.Cell>
-                                {getMovementValues(monster)}
+                                {movementValues}
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
                 </Table>
             </Card.Content>
             <Card.Content>
-                <Table className='monsterTable'>
+                <Table unstackable className='monsterTable'>
                     <Table.Body>
                         <Table.Row>
                             <Table.Cell>
-                                <ContentLine label="STR" value={getModifierString(monster.strength)} />
+                                <ContentLine label="STR" value={modifiers.str} />
                             </Table.Cell>
                             <Table.Cell>
-                                <ContentLine label="DEX" value={getModifierString(monster.dexterity)} />
+                                <ContentLine label="DEX" value={modifiers.dex} />
                             </Table.Cell>
                             <Table.Cell>
-                                <ContentLine label="CON" value={getModifierString(monster.constitution)} />
+                                <ContentLine label="CON" value={modifiers.con} />
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>
-                                <ContentLine label="INT" value={getModifierString(monster.intelligence)} />
+                                <ContentLine label="INT" value={modifiers.int} />
                             </Table.Cell>
                             <Table.Cell>
-                                <ContentLine label="WIS" value={getModifierString(monster.wisdom)} />
+                                <ContentLine label="WIS" value={modifiers.wis} />
                             </Table.Cell>
                             <Table.Cell>
-                                <ContentLine label="CHA" value={getModifierString(monster.charisma)} />
+                                <ContentLine label="CHA" value={modifiers.cha} />
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
                 </Table>
             </Card.Content>
             <Card.Content>
-                <ContentLine label="Skills" value={getProficiencies(monster)} />
-                <ContentLine label="Senses" value={getSenses(monster)} />
+                <ContentLine label="Skills" value={proficiencies} />
+                <ContentLine label="Senses" value={senses} />
                 <ContentLine label="Languages" value={monster.languages} />
                 <ContentLine label="Challenge" value={`${monster.challenge_rating} (${monster.xp} XP)`} />
             </Card.Content>
             <Card.Content>
-                {getSpecialAbilities(monster)}
+                {specialAbilities}
                 <Header as='h4'>Actions</Header>
                 <Divider />
-                {getActions(monster)}
+                {actions}
             </Card.Content>
         </Card>
     )
