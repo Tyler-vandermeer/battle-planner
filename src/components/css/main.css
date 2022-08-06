@@ -17,7 +17,7 @@
     border: none !important;
 }
 
-div.bar > .progress {
+div.bar>.progress {
     right: auto !important;
     left: 50% !important;
 }
@@ -26,16 +26,21 @@ div.bar > .progress {
     display: flex;
 }
 
-div.healthBar > button {
+div.healthBar>button {
     margin: 0 !important;
 }
 
-div.healthBar > div {
+div.healthBar>div {
     margin: 0 !important;
     width: 100%;
     background-color: darkred !important;
 }
 
-div.healthBar > div > div.bar {
+div.healthBar>div>div.bar {
     height: 100% !important;
+}
+
+.absRight {
+    position: absolute;
+    right: 0.25em;
 }

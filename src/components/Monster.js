@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Divider, Header, Icon, Table, Progress, Button } from 'semantic-ui-react';
+import { Card, Divider, Header, Icon, Table, Progress, Button, Form } from 'semantic-ui-react';
 import ContentLine from './ContentLine';
 
 const getMonsterCharacteristics = (monster) => {
@@ -53,13 +53,22 @@ const getModifierString = (value) => {
     return `${value} (${mod > 0 ? '+' : ''}${mod})`
 }
 
-const Monster = (props) => {
-    const [currentHealth, setCurrentHealth] = useState(props.data.monster.hit_points);
-    useEffect(() => { setCurrentHealth(props.data.monster.hit_points) }, [props.data.monster.hit_points]);
+const rollIniative = (dex) => Math.floor(Math.random() * 20 + 1) + getModifierValue(dex);
 
+const Monster = (props) => {
     const monster = props.data.monster;
 
-    const iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
+    const [currentHealth, setCurrentHealth] = useState(monster.hit_points);
+    useEffect(() => { setCurrentHealth(monster.hit_points) }, [monster.hit_points]);
+
+    const initialDescription = getMonsterCharacteristics(monster);
+
+    const [description, setDescription] = useState(initialDescription);
+    useEffect(() => { setDescription(initialDescription) }, [initialDescription]);
+
+    const [iniative, setIniative] = useState(0);
+    useEffect(() => { setIniative(rollIniative(monster.dexterity)) }, [monster.dexterity]);
+
     const movementValues = getMovementValues(monster);
     const proficiencies = getProficiencies(monster);
     const senses = getSenses(monster);
@@ -88,12 +97,16 @@ const Monster = (props) => {
 
     return (
         <Card>
+            <span className='absRight'><Icon onClick={onXClick} link name='cancel' /></span>
             <Card.Content>
-                <Card.Header>
-                    {monster.name}
-                    <Icon onClick={onXClick} link size='small' name='cancel' />
-                </Card.Header>
-                <Card.Meta>{getMonsterCharacteristics(monster)}</Card.Meta>
+                <Card.Header>{monster.name}</Card.Header>
+                <Card.Meta>
+                    {description}
+                    <Icon style={{ paddingLeft: '0.5em' }} link name='edit outline' />
+                </Card.Meta>
+                <Form>
+                    <Form.TextArea value={description} />
+                </Form>
             </Card.Content>
             <Card.Content>
                 <Table unstackable className='monsterTable'>

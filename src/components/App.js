@@ -58,6 +58,7 @@ class App extends React.Component {
     // Add side panels that will hold PCs
     // add tool tips for spells
     // Add desc tooltip for the monster
+    // Maybe make monsters collapsable underneath the stats instead of scrollable
 
     render() {
         return (
