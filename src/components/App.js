@@ -48,7 +48,7 @@ class App extends React.Component {
     }
 
     // TODO:
-    // Fix the page title
+    // Fix health bar
     // Make it look not like ass on mobile
     // Add component for editable field for changing stats
     // Have some of them be able to be temprary additions (modifiers)
@@ -59,7 +59,9 @@ class App extends React.Component {
     // add tool tips for spells
     // Add desc tooltip for the monster
     // Maybe make monsters collapsable underneath the stats instead of scrollable
-
+    // Make it save data to local storage so it remembers where you left off
+    // Maybe make it so it can be exported to a json file
+    
     render() {
         return (
             <div>

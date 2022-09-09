@@ -63,6 +63,7 @@ const Monster = (props) => {
 
     const initialDescription = getMonsterCharacteristics(monster);
 
+    const [edit, setEdit] = useState(false);
     const [description, setDescription] = useState(initialDescription);
     useEffect(() => { setDescription(initialDescription) }, [initialDescription]);
 
@@ -84,8 +85,14 @@ const Monster = (props) => {
         cha: getModifierString(monster.charisma)
     }
 
-    const onXClick = (ev) => {
+    const onClickEdit = (ev) => setEdit(previous => !previous);
+
+    const onClickX = (ev) => {
         props.handleRemoveMonster(props.data.id)
+    }
+
+    const handleDescriptionChange = (ev) => {
+        setDescription(p => ev.target.value);
     }
 
     const handleHealthChange = (ev) => {
@@ -97,15 +104,17 @@ const Monster = (props) => {
 
     return (
         <Card>
-            <span className='absRight'><Icon onClick={onXClick} link name='cancel' /></span>
+            <Icon className='absRight' style={{ top: '0.15em' }} onClick={onClickX} link name='cancel' />
             <Card.Content>
                 <Card.Header>{monster.name}</Card.Header>
                 <Card.Meta>
-                    {description}
-                    <Icon style={{ paddingLeft: '0.5em' }} link name='edit outline' />
+                    <div className={edit ? 'hide' : 'monsterMeta'}>
+                        <pre>{description}</pre>
+                    </div>
+                    <Icon onClick={onClickEdit} className='absRight' style={{ right: '0.4em' }} link name='edit outline' />
                 </Card.Meta>
-                <Form>
-                    <Form.TextArea value={description} />
+                <Form onSubmit={(ev) => ev.preventDefault()} className={edit ? 'editArea' : 'hide'}>
+                    <Form.TextArea onChange={handleDescriptionChange} value={description} />
                 </Form>
             </Card.Content>
             <Card.Content>

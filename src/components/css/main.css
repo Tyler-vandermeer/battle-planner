@@ -44,3 +44,17 @@ div.healthBar>div>div.bar {
     position: absolute;
     right: 0.25em;
 }
+
+.monsterMeta {
+    display: inline-block;
+}
+
+.editArea {
+    padding-top: 1em;
+    margin: auto !important;
+    width: 80%;
+}
+
+.hide {
+    display: none;
+}
