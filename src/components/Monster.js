@@ -98,7 +98,7 @@ const Monster = (props) => {
     const handleHealthChange = (ev) => {
         setCurrentHealth((previous) => {
             const newValue = previous + ~~ev.target.value;
-            return newValue > monster.hit_points ? monster.hit_points : newValue;
+            return Math.min(Math.max(newValue, 0), monster.hit_points);;
         });
     }
 

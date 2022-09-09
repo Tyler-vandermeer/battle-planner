@@ -33,11 +33,19 @@ div.healthBar>button {
 div.healthBar>div {
     margin: 0 !important;
     width: 100%;
-    background-color: darkred !important;
+    background-color: rgb(255, 60, 60) !important;
 }
 
-div.healthBar>div>div.bar {
+.ui.progress .bar {
     height: 100% !important;
+}
+
+.ui.progress[data-percent="0"] .bar {
+    background: transparent;
+}
+
+.ui.progress[data-percent="0"] .bar .progress {
+    color: rgba(0, 0, 0, 0.87);
 }
 
 .absRight {
