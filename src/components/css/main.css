@@ -1,7 +1,7 @@
 .card {
     width: 100% !important;
-    height: 500px;
-    overflow-y: scroll;
+    /* height: 500px;
+    overflow-y: scroll; */
 }
 
 .monsterTable {
@@ -53,16 +53,25 @@ div.healthBar>div {
     right: 0.25em;
 }
 
+.margin0 {
+    margin: 0;
+}
+
 .monsterMeta {
     display: inline-block;
 }
 
 .editArea {
-    padding-top: 1em;
+    padding-top: 0.25em;
     margin: auto !important;
     width: 80%;
 }
 
 .hide {
     display: none;
+}
+
+.rotate {
+    transform: rotate(180deg);
+    transition: transform 150ms ease;
 }

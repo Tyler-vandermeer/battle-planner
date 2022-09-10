@@ -9,7 +9,7 @@ class App extends React.Component {
 
     addMonster = async (monsterName) => {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
-        this.setState({ monsters: [{ id: this.getMonsterIndex(response.data.index), monster: response.data}, ...this.state.monsters] });
+        this.setState({ monsters: [{ id: this.getMonsterIndex(response.data.index), monster: response.data }, ...this.state.monsters] });
     }
 
     getMonsterIndex = (monsterIndex) => {
@@ -36,7 +36,29 @@ class App extends React.Component {
     }
 
     monsters = () => {
-        return this.state.monsters.map((m, i) => { return <Grid.Column key={i}><Monster key={i} data={m} handleRemoveMonster={this.handleRemoveMonster} /></Grid.Column> });
+        const grid = {
+            c1: [],
+            c2: [],
+            c3: []
+        };
+        
+        for(let i = 0; i < this.state.monsters.length; i++) {
+            const monster = <Monster key={i} data={this.state.monsters[i]} handleRemoveMonster={this.handleRemoveMonster} />;
+            switch (i % 3) {
+                case 0: grid.c1.push(monster); break;
+                case 1: grid.c2.push(monster); break;
+                case 2: grid.c3.push(monster); break;
+                default: break;
+            }
+        }
+
+        return (
+            <Grid.Row>
+                <Grid.Column>{grid.c1}</Grid.Column>
+                <Grid.Column>{grid.c2}</Grid.Column>
+                <Grid.Column>{grid.c3}</Grid.Column>
+            </Grid.Row>
+        )
     }
 
     handleSearchSubmit = (monsterName) => {
@@ -44,24 +66,21 @@ class App extends React.Component {
     }
 
     handleRemoveMonster = (id) => {
-        this.setState({ monsters: this.state.monsters.filter(x => x.id !== id)});
+        this.setState({ monsters: this.state.monsters.filter(x => x.id !== id) });
     }
 
     // TODO:
-    // Fix health bar
-    // Make it look not like ass on mobile
-    // Add component for editable field for changing stats
-    // Have some of them be able to be temprary additions (modifiers)
-    // Add the ability to add custom descriptors to monsters
+    // Make the skills & actions look better with a table
+    // Add top section that will hold PCs
     // Add current condition effects to monster
     // maybe make descriptions of abilities tool tips
-    // Add side panels that will hold PCs
     // add tool tips for spells
+    // Add component for editable field for changing stats
+    // Have some of them be able to be temprary additions (modifiers)
     // Add desc tooltip for the monster
-    // Maybe make monsters collapsable underneath the stats instead of scrollable
     // Make it save data to local storage so it remembers where you left off
     // Maybe make it so it can be exported to a json file
-    
+
     render() {
         return (
             <div>

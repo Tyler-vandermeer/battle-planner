@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Divider, Header, Icon, Table, Progress, Button, Form } from 'semantic-ui-react';
+import Collapsible from 'react-collapsible';
 import ContentLine from './ContentLine';
 
 const getMonsterCharacteristics = (monster) => {
@@ -70,6 +71,8 @@ const Monster = (props) => {
     const [iniative, setIniative] = useState(0);
     useEffect(() => { setIniative(rollIniative(monster.dexterity)) }, [monster.dexterity]);
 
+    const [rotate, setRotate] = useState(false);
+
     const movementValues = getMovementValues(monster);
     const proficiencies = getProficiencies(monster);
     const senses = getSenses(monster);
@@ -102,6 +105,8 @@ const Monster = (props) => {
         });
     }
 
+    const onExpandClick = (ev) => setRotate(p => !p);
+
     return (
         <Card>
             <Icon className='absRight' style={{ top: '0.15em' }} onClick={onClickX} link name='cancel' />
@@ -109,7 +114,7 @@ const Monster = (props) => {
                 <Card.Header>{monster.name}</Card.Header>
                 <Card.Meta>
                     <div className={edit ? 'hide' : 'monsterMeta'}>
-                        <pre>{description}</pre>
+                        <pre className='margin0'>{description}</pre>
                     </div>
                     <Icon onClick={onClickEdit} className='absRight' style={{ right: '0.4em' }} link name='edit outline' />
                 </Card.Meta>
@@ -171,18 +176,20 @@ const Monster = (props) => {
                     </Table.Body>
                 </Table>
             </Card.Content>
-            <Card.Content>
-                <ContentLine label="Skills" value={proficiencies} />
-                <ContentLine label="Senses" value={senses} />
-                <ContentLine label="Languages" value={monster.languages} />
-                <ContentLine label="Challenge" value={`${monster.challenge_rating} (${monster.xp} XP)`} />
-            </Card.Content>
-            <Card.Content>
-                {specialAbilities}
-                <Header as='h4'>Actions</Header>
-                <Divider />
-                {actions}
-            </Card.Content>
+            <Collapsible trigger={<Icon onClick={onExpandClick} className={rotate ? 'rotate' : ''} size='large' link name='angle down' />}>
+                <Card.Content>
+                    <ContentLine label="Skills" value={proficiencies} />
+                    <ContentLine label="Senses" value={senses} />
+                    <ContentLine label="Languages" value={monster.languages} />
+                    <ContentLine label="Challenge" value={`${monster.challenge_rating} (${monster.xp} XP)`} />
+                </Card.Content>
+                <Card.Content>
+                    {specialAbilities}
+                    <Header as='h4'>Actions</Header>
+                    <Divider />
+                    {actions}
+                </Card.Content>
+            </Collapsible>
         </Card>
     )
 }
