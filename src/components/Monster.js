@@ -108,7 +108,7 @@ const Monster = (props) => {
     const onExpandClick = (ev) => setRotate(p => !p);
 
     return (
-        <Card>
+        <Card className='monsterCard'>
             <Icon className='absRight' style={{ top: '0.15em' }} onClick={onClickX} link name='cancel' />
             <Card.Content>
                 <Card.Header>{monster.name}</Card.Header>

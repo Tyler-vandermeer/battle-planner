@@ -1,13 +1,9 @@
-.card {
+.monsterCard {
     width: 100% !important;
-    /* height: 500px;
-    overflow-y: scroll; */
 }
 
 .monsterTable {
     border: none !important;
-    width: 80% !important;
-    margin: auto !important;
     text-align: center !important;
 }
 
@@ -54,7 +50,7 @@ div.healthBar>div {
 }
 
 .margin0 {
-    margin: 0;
+    margin: 0 !important;
 }
 
 .monsterMeta {
@@ -74,4 +70,27 @@ div.healthBar>div {
 .rotate {
     transform: rotate(180deg);
     transition: transform 150ms ease;
+}
+
+div[role="healthWheel"] {
+    --size: 90px;
+    --fg: #21ba45;
+    --bg: rgb(255, 60, 60);
+    --pgPercentage: var(--value);
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background:
+        conic-gradient(var(--fg) calc(var(--pgPercentage) * 1%), var(--bg) 0);
+    color: var(--fg);
+    transform: scale(-1, 1);
+    float: left;
+}
+
+div[role="healthWheel"] > div {
+    margin: 5px;
+}
+
+.draggable {
+    cursor: e-resize;
 }
