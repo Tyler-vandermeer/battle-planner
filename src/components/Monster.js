@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Divider, Header, Icon, Table, Progress, Button, Form } from 'semantic-ui-react';
 import Collapsible from 'react-collapsible';
 import ContentLine from './ContentLine';
+import { getModifierValue } from '../Helpers/Helpers'
 
 const getMonsterCharacteristics = (monster) => {
     return `${monster.size} ${monster.type} ${monster.subtype === undefined ? '' : `(${monster.subtype})`}${monster.alignment}`;
@@ -47,14 +48,12 @@ const getMovementValues = (monster) => {
     return content;
 }
 
-const getModifierValue = (value) => Math.floor((value - 10) / 2);
+// const getModifierValue = (value) => Math.floor((value - 10) / 2);
 
 const getModifierString = (value) => {
     const mod = getModifierValue(value)
     return `${value} (${mod > 0 ? '+' : ''}${mod})`
 }
-
-const rollIniative = (dex) => Math.floor(Math.random() * 20 + 1) + getModifierValue(dex);
 
 const Monster = (props) => {
     const monster = props.data.monster;
@@ -67,9 +66,6 @@ const Monster = (props) => {
     const [edit, setEdit] = useState(false);
     const [description, setDescription] = useState(initialDescription);
     useEffect(() => { setDescription(initialDescription) }, [initialDescription]);
-
-    const [iniative, setIniative] = useState(0);
-    useEffect(() => { setIniative(rollIniative(monster.dexterity)) }, [monster.dexterity]);
 
     const [rotate, setRotate] = useState(false);
 
@@ -108,7 +104,7 @@ const Monster = (props) => {
     const onExpandClick = (ev) => setRotate(p => !p);
 
     return (
-        <Card className='monsterCard'>
+        <Card className='monsterCard' data-id={props.data.id}>
             <Icon className='absRight' style={{ top: '0.15em' }} onClick={onClickX} link name='cancel' />
             <Card.Content>
                 <Card.Header>{monster.name}</Card.Header>
@@ -139,7 +135,7 @@ const Monster = (props) => {
                                 <ContentLine label="AC" value={monster.armor_class} />
                             </Table.Cell>
                             <Table.Cell>
-                                <ContentLine label="Iniative" value={iniative} />
+                                <ContentLine label="Iniative" value={monster.iniative} />
                             </Table.Cell>
                             <Table.Cell>
                                 {movementValues}

@@ -4,13 +4,22 @@ import Monster from './Monster';
 import SearchBar from './SearchBar';
 import dnd5e from '../api/dnd5e';
 import Player from './Player';
+import { getModifierValue } from '../Helpers/Helpers'
 
 class App extends React.Component {
-    state = { monsters: [], searchOptions: [], val: 5 };
+    state = {
+        monsters: [], searchOptions: [], players: {
+            Rohkume: { name: 'Rohkume', portrait: 'half-orc-icon.png', AC: '17', speed: '30 ft.', iniative: 0, stats: [16, 13, 16, 12, 17, 9] },
+            Faen: { name: 'Faen', portrait: 'elf-icon.png', AC: '11', speed: '35 ft.', iniative: 0, stats: [9, 13, 12, 13, 16, 16] },
+            Ash: { name: 'Ash', portrait: 'dragonborn-icon.png', AC: '13', speed: '30 ft.', iniative: 0, stats: [17, 13, 13, 11, 9, 10] }
+        }
+    };
 
     addMonster = async (monsterName) => {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
-        this.setState({ monsters: [{ id: this.getMonsterIndex(response.data.index), monster: response.data }, ...this.state.monsters] });
+        const monster = response.data;
+        monster.iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
+        this.setState({ monsters: [{ id: this.getMonsterIndex(monster.index), monster: monster }, ...this.state.monsters] });
     }
 
     getMonsterIndex = (monsterIndex) => {
@@ -36,6 +45,7 @@ class App extends React.Component {
         this.loadMonsters();
     }
 
+    // This coul probably be moved to a separate monster grid component
     monsters = () => {
         const grid = {
             c1: [],
@@ -44,7 +54,7 @@ class App extends React.Component {
         };
 
         for (let i = 0; i < this.state.monsters.length; i++) {
-            const monster = <Monster key={i} data={this.state.monsters[i]} handleRemoveMonster={this.handleRemoveMonster} />;
+            const monster = <Monster key={i} index={i} data={this.state.monsters[i]} handleRemoveMonster={this.handleRemoveMonster} />;
             switch (i % 3) {
                 case 0: grid.c1.push(monster); break;
                 case 1: grid.c2.push(monster); break;
@@ -62,6 +72,48 @@ class App extends React.Component {
         )
     }
 
+    updatePlayerIniative = (value, name) => {
+        const players = this.state.players;
+        players[name].iniative = value;
+        this.setState({ players: players });
+    }
+
+    highlightCharacter = (ev) => {
+        const elements = document.querySelectorAll(`[data-id="${ev.currentTarget.dataset.id}"]`);
+        elements.forEach((e) => {
+            e.classList.add('highlight');
+        });
+    }
+
+    unhiglightCharacter = (ev) => {
+        const elements = document.querySelectorAll(`[data-id="${ev.currentTarget.dataset.id}"]`);
+        elements.forEach((e) => {
+            e.classList.remove('highlight');
+        });
+    }
+
+    iniativeOrder = () => {
+        const players = this.state.players;
+        var characterList = [
+            ...this.state.monsters.map((v) => { return { name: v.monster.name, iniative: v.monster.iniative, index: v.id } }),
+            { name: players.Rohkume.name, iniative: players.Rohkume.iniative, index: players.Rohkume.name },
+            { name: players.Faen.name, iniative: players.Faen.iniative, index: players.Faen.name },
+            { name: players.Ash.name, iniative: players.Ash.iniative, index: players.Ash.name }
+        ];
+
+        characterList.sort((a, b) => b.iniative - a.iniative);
+
+        return characterList.map((v, i) => {
+            return (
+                <Card key={i}  data-id={v.index} onMouseEnter={this.highlightCharacter} onMouseLeave={this.unhiglightCharacter}>
+                    <Card.Content>
+                        <Card.Header>{v.name}: {v.iniative}</Card.Header>
+                    </Card.Content>
+                </Card>
+            )
+        });
+    }
+
     handleSearchSubmit = (monsterName) => {
         this.addMonster(monsterName);
     }
@@ -70,12 +122,7 @@ class App extends React.Component {
         this.setState({ monsters: this.state.monsters.filter(x => x.id !== id) });
     }
 
-    tempBtn = () => {
-        this.setState({ val: this.state.val + 1 });
-    }
-
     // TODO:
-    // Add side bar that will show the combat order
     // on hover for side bar will highlight the player/monster it represents
     // Make the skills & actions look better with a table
     // Add top section that will hold PCs
@@ -87,21 +134,33 @@ class App extends React.Component {
     // Add desc tooltip for the monster
     // Make it save data to local storage so it remembers where you left off (need to save monster names, health, modifiers, initiative)
     // Maybe make it so it can be exported to a json file
+    // Maybe change the mouse events for changing the iniative for players
 
     render() {
         return (
             <Container textAlign='center' fluid>
                 <Header as='h2'>Battle Tracker</Header>
                 <Card.Group centered>
-                    <Player name='Rohkume' portrait='half-orc-icon.png' AC='17' speed='30 ft.' stats={[16, 13, 16, 12, 17, 9]} />
-                    <Player name='Faen' portrait='elf-icon.png' AC='11' speed='35 ft.' stats={[9, 13, 12, 13, 16, 16]} />
-                    <Player name='Ash' portrait='dragonborn-icon.png' AC='13' speed='30 ft.' stats={[17, 13, 13, 11, 9, 10]} />
+                    <Player {...this.state.players.Rohkume} updateIniative={this.updatePlayerIniative} />
+                    <Player {...this.state.players.Faen} updateIniative={this.updatePlayerIniative} />
+                    <Player {...this.state.players.Ash} updateIniative={this.updatePlayerIniative} />
                 </Card.Group>
                 <Divider />
                 <SearchBar options={this.state.searchOptions} onSubmit={this.handleSearchSubmit} />
                 <br />
-                <Grid relaxed stackable padded columns={3}>
-                    {this.monsters()}
+                <Grid>
+                    <Grid.Row>
+                        <Grid.Column width={14}>
+                            <Grid relaxed stackable padded columns={3}>
+                                {this.monsters()}
+                            </Grid>
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+                            <Container style={{ paddingTop: '1rem' }}>
+                                {this.iniativeOrder()}
+                            </Container>
+                        </Grid.Column>
+                    </Grid.Row>
                 </Grid>
             </Container>
         )

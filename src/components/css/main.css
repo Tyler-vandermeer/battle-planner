@@ -94,3 +94,7 @@ div[role="healthWheel"] > div {
 .draggable {
     cursor: e-resize;
 }
+
+.highlight {
+    border: 1px solid black !important;
+}
