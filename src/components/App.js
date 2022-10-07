@@ -15,9 +15,18 @@ class App extends React.Component {
         }
     };
 
+    createMonsterObj = (monster) => {
+        console.log(monster);
+
+    }
+
+    // Maybe move api access methods into the api class
     addMonster = async (monsterName) => {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
         const monster = response.data;
+
+        this.createMonsterObj(monster);
+
         monster.iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
         this.setState({ monsters: [{ id: this.getMonsterIndex(monster.index), monster: monster }, ...this.state.monsters] });
     }
@@ -33,10 +42,10 @@ class App extends React.Component {
 
     init = async () => {
         await this.addMonster('aboleth');
-        await this.addMonster('goblin');
-        await this.addMonster('goblin');
-        await this.addMonster('goblin');
-        await this.addMonster('goblin');
+        // await this.addMonster('goblin');
+        // await this.addMonster('goblin');
+        // await this.addMonster('goblin');
+        // await this.addMonster('goblin');
     }
 
     componentDidMount() {
@@ -123,6 +132,8 @@ class App extends React.Component {
     }
 
     // TODO:
+    // Standardize monster object to be easier to edit
+    // Make modal that will allow to edit anything
     // on hover for side bar will highlight the player/monster it represents
     // Make the skills & actions look better with a table
     // Add top section that will hold PCs
