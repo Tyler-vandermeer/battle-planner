@@ -4,14 +4,10 @@ import Collapsible from 'react-collapsible';
 import ContentLine from './ContentLine';
 import { getModifierValue } from '../Helpers/Helpers'
 
-const getMonsterCharacteristics = (monster) => {
-    return `${monster.size} ${monster.type} ${monster.subtype === undefined ? '' : `(${monster.subtype})`}${monster.alignment}`;
-}
-
 const getProficiencies = (monster) => {
     const proficiencies = monster.proficiencies;
     if (proficiencies !== undefined) {
-        return proficiencies.map((e) => `${e.proficiency.name.replace('Skill:', '')} +${e.value}`).join(', ');
+        return proficiencies.map((e) => `${e.name} +${e.value}`).join(', ');
     }
     return '';
 }
@@ -48,18 +44,13 @@ const getMovementValues = (monster) => {
     return content;
 }
 
-const getModifierString = (value) => {
-    const mod = getModifierValue(value)
-    return `${value} (${mod > 0 ? '+' : ''}${mod})`
-}
-
 const Monster = (props) => {
     const monster = props.data.monster;
 
-    const [currentHealth, setCurrentHealth] = useState(monster.hit_points);
-    useEffect(() => { setCurrentHealth(monster.hit_points) }, [monster.hit_points]);
+    const [currentHealth, setCurrentHealth] = useState(monster.hp);
+    useEffect(() => { setCurrentHealth(monster.hp) }, [monster.hp]);
 
-    const initialDescription = getMonsterCharacteristics(monster);
+    const initialDescription = monster.desc;
 
     const [edit, setEdit] = useState(false);
     const [description, setDescription] = useState(initialDescription);
@@ -73,14 +64,13 @@ const Monster = (props) => {
     const specialAbilities = getSpecialAbilities(monster);
     const actions = getActions(monster);
 
-    const modifiers = {
-        str: getModifierString(monster.strength),
-        dex: getModifierString(monster.dexterity),
-        con: getModifierString(monster.constitution),
-        int: getModifierString(monster.intelligence),
-        wis: getModifierString(monster.wisdom),
-        cha: getModifierString(monster.charisma)
-    }
+    const statCells = monster.stats.map((v) => {
+        return (
+            <Table.Cell key={v.name}>
+                <ContentLine label={v.name} value={`${v.value} (${v.modifier > 0 ? '+' : ''}${v.modifier})`} />
+            </Table.Cell>
+        )
+    });
 
     const onClickEdit = (ev) => setEdit(previous => !previous);
 
@@ -95,7 +85,7 @@ const Monster = (props) => {
     const handleHealthChange = (ev) => {
         setCurrentHealth((previous) => {
             const newValue = previous + ~~ev.target.value;
-            return Math.min(Math.max(newValue, 0), monster.hit_points);;
+            return Math.min(Math.max(newValue, 0), monster.hp);;
         });
     }
 
@@ -123,14 +113,14 @@ const Monster = (props) => {
                             <Table.Cell colSpan='3'>
                                 <div className='healthBar'>
                                     <Button onClick={handleHealthChange} value={-1}>-</Button>
-                                    <Progress value={currentHealth} total={monster.hit_points} progress='ratio' color='green' />
+                                    <Progress value={currentHealth} total={monster.hp} progress='ratio' color='green' />
                                     <Button onClick={handleHealthChange} value={1}>+</Button>
                                 </div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>
-                                <ContentLine label="AC" value={monster.armor_class} />
+                                <ContentLine label="AC" value={monster.ac} />
                             </Table.Cell>
                             <Table.Cell>
                                 <ContentLine label="Iniative" value={monster.iniative} />
@@ -146,26 +136,10 @@ const Monster = (props) => {
                 <Table unstackable className='monsterTable'>
                     <Table.Body>
                         <Table.Row>
-                            <Table.Cell>
-                                <ContentLine label="STR" value={modifiers.str} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="DEX" value={modifiers.dex} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="CON" value={modifiers.con} />
-                            </Table.Cell>
+                            {statCells.slice(0, 3)}
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>
-                                <ContentLine label="INT" value={modifiers.int} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="WIS" value={modifiers.wis} />
-                            </Table.Cell>
-                            <Table.Cell>
-                                <ContentLine label="CHA" value={modifiers.cha} />
-                            </Table.Cell>
+                            {statCells.slice(3)}
                         </Table.Row>
                     </Table.Body>
                 </Table>

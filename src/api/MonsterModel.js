@@ -13,6 +13,7 @@ export default class MonsterModel {
         this.desc = `${monster.size} ${monster.type} ${monster.subtype === undefined ? '' : `(${monster.subtype})`}${monster.alignment}`;
         this.hp = monster.hit_points;
         this.ac = monster.armor_class;
+        this.iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
         this.languages = monster.languages;
         this.xp = monster.xp;
         this.conditionImmunities = monster.condition_immunities;
@@ -24,11 +25,11 @@ export default class MonsterModel {
         this.movement = this.getNameValueList(monster.speed);
         this.senses = this.getNameValueList(monster.senses);
         this.setProficienciesList(monster);
-        this.specialAbilities = this.getActions(monster.special_abilities);
+        this.specialAbilities = this.getAbilities(monster.special_abilities);
         // do something about spells
-        this.actions = this.getActions(monster.actions);
-        this.legendaryActions = this.getActions(monster.legendary_actions);
-        this.reactions = this.getActions(monster.reactions);
+        this.actions = this.getAbilities(monster.actions);
+        this.legendaryActions = this.getAbilities(monster.legendary_actions);
+        this.reactions = this.getAbilities(monster.reactions);
     }
 
     setStatsArray(monster) {
@@ -36,18 +37,17 @@ export default class MonsterModel {
         for (var statName of ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']) {
             const value = monster[statName];
             this.stats.push({
-                name: statName,
+                name: statName.slice(0, 3).toUpperCase(),
                 value: value,
                 modifier: getModifierValue(value)
             });
         }
     }
 
-    getNameValueList(property) {
+    getNameValueList(property, isValueNumber = false) {
         const nameValues = [];
         for (let k in property) {
-            console.log(k, property[k]);
-            nameValues.push({ name: k, value: `${property[k]}` });
+            nameValues.push({ name: k, value: isValueNumber ? property[k] : `${property[k]}` });
         }
         return nameValues;
     }
@@ -64,17 +64,30 @@ export default class MonsterModel {
         }
     }
 
-    getActions(actions) {
+    getAbilities(actions) {
         if (actions === undefined)
             return [];
 
         const normalizedActions = []
         for (let ability of actions) {
-            normalizedActions.push({
+            const action = {
+                type: 'action',
                 name: ability.name,
                 desc: ability.desc,
                 usage: ability.usage
-            });
+            };
+
+            if (ability.spellcasting !== undefined) {
+                const spellcasting = ability.spellcasting;
+                action.type = 'spellcasting';
+                action.ability = spellcasting.ability.name;
+                action.dc = spellcasting.dc;
+                action.modifier = spellcasting.modifier;
+                action.slots = this.getNameValueList(spellcasting.slots);
+                action.spells = spellcasting.spells;
+            }
+
+            normalizedActions.push(action);
         }
         return normalizedActions;
     }
