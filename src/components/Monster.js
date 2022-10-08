@@ -48,8 +48,6 @@ const getMovementValues = (monster) => {
     return content;
 }
 
-// const getModifierValue = (value) => Math.floor((value - 10) / 2);
-
 const getModifierString = (value) => {
     const mod = getModifierValue(value)
     return `${value} (${mod > 0 ? '+' : ''}${mod})`
