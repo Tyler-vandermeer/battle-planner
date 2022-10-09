@@ -2,47 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Card, Divider, Header, Icon, Table, Progress, Button, Form } from 'semantic-ui-react';
 import Collapsible from 'react-collapsible';
 import ContentLine from './ContentLine';
-import { getModifierValue } from '../Helpers/Helpers'
-
-const getProficiencies = (monster) => {
-    const proficiencies = monster.proficiencies;
-    if (proficiencies !== undefined) {
-        return proficiencies.map((e) => `${e.name} +${e.value}`).join(', ');
-    }
-    return '';
-}
-
-const getSenses = (monster) => {
-    const senses = monster.senses;
-    if (senses !== undefined) {
-        return Object.entries(senses).map(([k, v]) => `${k} ${v}`).join(', ');
-    }
-    return '';
-}
-
-const getSpecialAbilities = (monster) => {
-    const abilities = monster.special_abilities;
-    if (abilities !== undefined) {
-        return abilities.map(e => <div className="description" key={e.name}><b>{e.name}: </b>{e.desc}</div>);
-    }
-    return '';
-}
-
-const getActions = (monster) => {
-    const actions = monster.actions;
-    if (actions !== undefined) {
-        return actions.map(e => <div className="description" key={e.name}><b>{e.name}: </b>{e.desc}</div>);
-    }
-    return '';
-}
-
-const getMovementValues = (monster) => {
-    const content = [];
-    for (let k in monster.speed) {
-        content.push(<ContentLine key={k} label={k} value={monster.speed[k]} />);
-    }
-    return content;
-}
 
 const Monster = (props) => {
     const monster = props.data.monster;
@@ -58,11 +17,11 @@ const Monster = (props) => {
 
     const [rotate, setRotate] = useState(false);
 
-    const movementValues = getMovementValues(monster);
-    const proficiencies = getProficiencies(monster);
-    const senses = getSenses(monster);
-    const specialAbilities = getSpecialAbilities(monster);
-    const actions = getActions(monster);
+    const movementValues = monster.getMovement();
+    const proficiencies = monster.getProficiencies();
+    const senses = monster.getSenses();
+    const specialAbilities = monster.getSpecialAbilities();
+    const actions = monster.getActions();
 
     const statCells = monster.stats.map((v) => {
         return (
@@ -149,7 +108,7 @@ const Monster = (props) => {
                     <ContentLine label="Skills" value={proficiencies} />
                     <ContentLine label="Senses" value={senses} />
                     <ContentLine label="Languages" value={monster.languages} />
-                    <ContentLine label="Challenge" value={`${monster.challenge_rating} (${monster.xp} XP)`} />
+                    <ContentLine label="Challenge" value={`${monster.challengeRating} (${monster.xp} XP)`} />
                 </Card.Content>
                 <Card.Content>
                     {specialAbilities}

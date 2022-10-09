@@ -1,11 +1,43 @@
 
 import { getModifierValue } from '../Helpers/Helpers'
+import ContentLine from '../components/ContentLine';
 
 export default class MonsterModel {
     constructor(id, monster) {
         this.id = id;
 
         this.init(monster);
+    }
+
+    getSenses() {
+        return this.senses.map((v) => `${v.name} ${v.value}`).join(', ');
+    }
+
+    getMovement() {
+        return this.movement.map((v) => <ContentLine key={v.name} label={v.name} value={v.value} />);
+    }
+
+    getProficiencies() {
+        const types = [...new Set(this.proficiencies.map(({ type }) => type))];
+        const content = [];
+
+        for (var type of types) {
+            const proficiencies = this.proficiencies
+                .filter((v) => v.type === type)
+                .map((v) => `${v.name} ${v.value}`)
+                .join(', ');
+            content.push(<ContentLine key={type} label={type} value={proficiencies} />);
+        }
+
+        return content;
+    }
+
+    getSpecialAbilities(property) {
+        return this.specialAbilities.map(v => <ContentLine key={v.name} className='description' label={v.name} value={v.desc} />)
+    }
+
+    getActions() {
+        return this.actions.map(v => <ContentLine key={v.name} className='description' label={v.name} value={v.desc} />)
     }
 
     init(monster) {
@@ -20,13 +52,13 @@ export default class MonsterModel {
         this.damageImmunities = monster.damage_immunities;
         this.damageResistances = monster.damage_resistances;
         this.damageVulnerabilities = monster.damage_vulnerabilities;
+        this.challengeRating = monster.challenge_rating;
 
         this.setStatsArray(monster);
         this.movement = this.getNameValueList(monster.speed);
         this.senses = this.getNameValueList(monster.senses);
         this.setProficienciesList(monster);
         this.specialAbilities = this.getAbilities(monster.special_abilities);
-        // do something about spells
         this.actions = this.getAbilities(monster.actions);
         this.legendaryActions = this.getAbilities(monster.legendary_actions);
         this.reactions = this.getAbilities(monster.reactions);
