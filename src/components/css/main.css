@@ -49,6 +49,11 @@ div.healthBar>div {
     right: 0.25em;
 }
 
+.absLeft {
+    position: absolute;
+    left: 0.25em;
+}
+
 .margin0 {
     margin: 0 !important;
 }

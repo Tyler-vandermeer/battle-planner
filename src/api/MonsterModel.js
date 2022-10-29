@@ -5,8 +5,7 @@ import ContentLine from '../components/ContentLine';
 export default class MonsterModel {
     constructor(id, monster) {
         this.id = id;
-
-        this.init(monster);
+            this.init(monster);
     }
 
     getSenses() {
@@ -20,10 +19,11 @@ export default class MonsterModel {
     getProficiencies() {
         const types = [...new Set(this.proficiencies.map(({ type }) => type))];
         const content = [];
+        const filterByType = (v) => v.type === type;
 
         for (var type of types) {
             const proficiencies = this.proficiencies
-                .filter((v) => v.type === type)
+                .filter(filterByType)
                 .map((v) => `${v.name} ${v.value}`)
                 .join(', ');
             content.push(<ContentLine key={type} label={type} value={proficiencies} />);
@@ -62,6 +62,10 @@ export default class MonsterModel {
         this.actions = this.getAbilities(monster.actions);
         this.legendaryActions = this.getAbilities(monster.legendary_actions);
         this.reactions = this.getAbilities(monster.reactions);
+    }
+
+    updateProperties(monster) {
+
     }
 
     setStatsArray(monster) {

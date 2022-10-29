@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Divider, Header, Icon, Table, Progress, Button, Form } from 'semantic-ui-react';
+import { Card, Divider, Header, Icon, Table, Progress, Button } from 'semantic-ui-react';
 import Collapsible from 'react-collapsible';
 import ContentLine from './ContentLine';
+import MonsterModal from './MonsterModal';
 
 const Monster = (props) => {
-    const monster = props.data.monster;
+    // const monster = props.data.monster;
+    const [monster, setMonster] = useState(props.data.monster);
 
     const [currentHealth, setCurrentHealth] = useState(monster.hp);
     useEffect(() => { setCurrentHealth(monster.hp) }, [monster.hp]);
 
-    const initialDescription = monster.desc;
-
     const [edit, setEdit] = useState(false);
-    const [description, setDescription] = useState(initialDescription);
-    useEffect(() => { setDescription(initialDescription) }, [initialDescription]);
-
     const [rotate, setRotate] = useState(false);
 
     const movementValues = monster.getMovement();
@@ -37,10 +34,6 @@ const Monster = (props) => {
         props.handleRemoveMonster(props.data.id)
     }
 
-    const handleDescriptionChange = (ev) => {
-        setDescription(p => ev.target.value);
-    }
-
     const handleHealthChange = (ev) => {
         setCurrentHealth((previous) => {
             const newValue = previous + ~~ev.target.value;
@@ -53,17 +46,12 @@ const Monster = (props) => {
     return (
         <Card className='monsterCard' data-id={props.data.id}>
             <Icon className='absRight' style={{ top: '0.15em' }} onClick={onClickX} link name='cancel' />
+            <Icon onClick={onClickEdit} className='absLeft' link name='edit outline' />
             <Card.Content>
                 <Card.Header>{monster.name}</Card.Header>
                 <Card.Meta>
-                    <div className={edit ? 'hide' : 'monsterMeta'}>
-                        <pre className='margin0'>{description}</pre>
-                    </div>
-                    <Icon onClick={onClickEdit} className='absRight' style={{ right: '0.4em' }} link name='edit outline' />
+                    <pre className='margin0'>{monster.desc}</pre>
                 </Card.Meta>
-                <Form onSubmit={(ev) => ev.preventDefault()} className={edit ? 'editArea' : 'hide'}>
-                    <Form.TextArea onChange={handleDescriptionChange} value={description} />
-                </Form>
             </Card.Content>
             <Card.Content>
                 <Table unstackable className='monsterTable'>
@@ -117,6 +105,7 @@ const Monster = (props) => {
                     {actions}
                 </Card.Content>
             </Collapsible>
+            <MonsterModal open={edit} setOpen={onClickEdit} monster={monster} updateMonster={setMonster} />
         </Card>
     )
 }
