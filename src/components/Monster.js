@@ -5,8 +5,7 @@ import ContentLine from './ContentLine';
 import MonsterModal from './MonsterModal';
 
 const Monster = (props) => {
-    // const monster = props.data.monster;
-    const [monster, setMonster] = useState(props.data.monster);
+    const monster = props.data.monster;
 
     const [currentHealth, setCurrentHealth] = useState(monster.hp);
     useEffect(() => { setCurrentHealth(monster.hp) }, [monster.hp]);
@@ -105,7 +104,7 @@ const Monster = (props) => {
                     {actions}
                 </Card.Content>
             </Collapsible>
-            <MonsterModal open={edit} setOpen={onClickEdit} monster={monster} updateMonster={setMonster} />
+            <MonsterModal open={edit} toggleOpen={onClickEdit} monster={monster} />
         </Card>
     )
 }

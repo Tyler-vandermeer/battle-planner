@@ -5,7 +5,7 @@ import ContentLine from '../components/ContentLine';
 export default class MonsterModel {
     constructor(id, monster) {
         this.id = id;
-            this.init(monster);
+        this.init(monster);
     }
 
     getSenses() {
@@ -64,8 +64,9 @@ export default class MonsterModel {
         this.reactions = this.getAbilities(monster.reactions);
     }
 
-    updateProperties(monster) {
-
+    updateProperties(monsterProps) {
+        for (let key in monsterProps)
+            this[key] = monsterProps[key];
     }
 
     setStatsArray(monster) {
