@@ -6,7 +6,18 @@ const MonsterModal = ({ open, toggleOpen, monster }) => {
 
     const onChangeProperty = (ev) => {
         const key = ev.target.dataset.key;
-        setLocalMonster((p) => ({ ...p, [key]: ev.target.value }));
+        const index = ev.target.dataset.index;
+        const value = ev.target.value;
+
+        setLocalMonster((p) => {
+            if (index !== undefined && index !== null) {
+                p[key][index].value = value;
+            } else {
+                p[key] = value;
+            }
+
+            return ({ ...p });
+        });
     }
 
     const onSaveChanges = (ev) => {
@@ -14,6 +25,15 @@ const MonsterModal = ({ open, toggleOpen, monster }) => {
         monster.updateProperties(localMonster);
         toggleOpen();
     }
+
+    const stats = localMonster.stats.map((v, i) => {
+        return (
+            <Form.Field key={i}>
+                <label htmlFor={v.name}>{v.name}:</label>
+                <input id={v.name} type='number' data-key='stats' data-index={i} value={v.value} onChange={onChangeProperty} />
+            </Form.Field>
+        );
+    });
 
     return (
         <Modal
@@ -46,6 +66,8 @@ const MonsterModal = ({ open, toggleOpen, monster }) => {
                         <label htmlFor='ac'>AC:</label>
                         <input id='ac' type='number' data-key="ac" value={localMonster.ac} onChange={onChangeProperty} />
                     </Form.Field>
+
+                    {stats}
 
                     <Button type='submit' onClick={onSaveChanges}>Save</Button>
                 </Form>
