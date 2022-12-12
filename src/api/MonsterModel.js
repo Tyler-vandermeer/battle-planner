@@ -67,6 +67,12 @@ export default class MonsterModel {
     updateProperties(monsterProps) {
         for (let key in monsterProps)
             this[key] = monsterProps[key];
+        this.updateStatModifiers();
+    }
+
+    updateStatModifiers() {
+        for (var stat of this.stats)
+            stat.modifier = getModifierValue(stat.value);
     }
 
     setStatsArray(monster) {

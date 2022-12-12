@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Icon, Form, Button } from 'semantic-ui-react';
+import { Modal, Icon, Form, Button, Grid } from 'semantic-ui-react';
 
 const MonsterModal = ({ open, toggleOpen, monster }) => {
     const [localMonster, setLocalMonster] = useState(monster);
@@ -28,10 +28,12 @@ const MonsterModal = ({ open, toggleOpen, monster }) => {
 
     const stats = localMonster.stats.map((v, i) => {
         return (
-            <Form.Field key={i}>
-                <label htmlFor={v.name}>{v.name}:</label>
-                <input id={v.name} type='number' data-key='stats' data-index={i} value={v.value} onChange={onChangeProperty} />
-            </Form.Field>
+            <Grid.Column key={i}>
+                <Form.Field>
+                    <label htmlFor={v.name}>{v.name}:</label>
+                    <input id={v.name} type='number' data-key='stats' data-index={i} value={v.value} onChange={onChangeProperty} />
+                </Form.Field>
+            </Grid.Column>
         );
     });
 
@@ -46,28 +48,47 @@ const MonsterModal = ({ open, toggleOpen, monster }) => {
             <Modal.Header>{localMonster.name}</Modal.Header>
             <Modal.Content>
                 <Form>
-                    <Form.Field>
-                        <label htmlFor='name'>Name:</label>
-                        <input id='name' type='text' data-key='name' value={localMonster.name} onChange={onChangeProperty} />
-                    </Form.Field>
+                    <Grid columns={2}>
+                        <Grid.Row>
+                            <Grid.Column>
+                                <Form.Field>
+                                    <label htmlFor='name'>Name:</label>
+                                    <input id='name' type='text' data-key='name' value={localMonster.name} onChange={onChangeProperty} />
+                                </Form.Field>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Form.Field>
+                                    <label htmlFor='desc'>Description:</label>
+                                    <Form.TextArea type='textarea' data-key='desc' value={localMonster.desc} onChange={onChangeProperty} />
+                                </Form.Field>
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Grid.Row>
+                            <Grid.Column>
+                                <Form.Field>
+                                    <label htmlFor='maxHp'>Max HP:</label>
+                                    <input id='maxHp' type='number' data-key="hp" value={localMonster.hp} onChange={onChangeProperty} />
+                                </Form.Field>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Form.Field>
+                                    <label htmlFor='ac'>AC:</label>
+                                    <input id='ac' type='number' data-key="ac" value={localMonster.ac} onChange={onChangeProperty} />
+                                </Form.Field>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
 
-                    <Form.Field>
-                        {/* Maybe make textarea */}
-                        <label htmlFor='desc'>Description:</label>
-                        <input id='desc' type='text' data-key='desc' value={localMonster.desc} onChange={onChangeProperty} />
-                    </Form.Field>
+                    <Grid columns={3}>
+                        <Grid.Row>
+                            {stats.slice(0, 3)}
+                        </Grid.Row>
+                        <Grid.Row>
+                            {stats.slice(3)}
+                        </Grid.Row>
+                    </Grid>
 
-                    <Form.Field>
-                        <label htmlFor='maxHp'>Max HP:</label>
-                        <input id='maxHp' type='number' data-key="hp" value={localMonster.hp} onChange={onChangeProperty} />
-                    </Form.Field>
-
-                    <Form.Field>
-                        <label htmlFor='ac'>AC:</label>
-                        <input id='ac' type='number' data-key="ac" value={localMonster.ac} onChange={onChangeProperty} />
-                    </Form.Field>
-
-                    {stats}
+                    <br />
 
                     <Button type='submit' onClick={onSaveChanges}>Save</Button>
                 </Form>
