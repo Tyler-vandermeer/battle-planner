@@ -4,7 +4,7 @@ import Monster from './Monster';
 import SearchBar from './SearchBar';
 import dnd5e from '../api/dnd5e';
 import Player from './Player';
-import { getModifierValue } from '../Helpers/Helpers'
+import MonsterModel from '../api/MonsterModel';
 
 class App extends React.Component {
     state = {
@@ -25,10 +25,9 @@ class App extends React.Component {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
         const monster = response.data;
 
-        this.createMonsterObj(monster);
-
-        monster.iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
-        this.setState({ monsters: [{ id: this.getMonsterIndex(monster.index), monster: monster }, ...this.state.monsters] });
+        const monsterModel = new MonsterModel(this.getMonsterIndex(monster.index), monster);
+        
+        this.setState({ monsters: [{ id: monsterModel.id, monster: monsterModel }, ...this.state.monsters] });
     }
 
     getMonsterIndex = (monsterIndex) => {
@@ -114,7 +113,7 @@ class App extends React.Component {
 
         return characterList.map((v, i) => {
             return (
-                <Card key={i}  data-id={v.index} onMouseEnter={this.highlightCharacter} onMouseLeave={this.unhiglightCharacter}>
+                <Card key={i} data-id={v.index} onMouseEnter={this.highlightCharacter} onMouseLeave={this.unhiglightCharacter}>
                     <Card.Content>
                         <Card.Header>{v.name}: {v.iniative}</Card.Header>
                     </Card.Content>
@@ -132,8 +131,7 @@ class App extends React.Component {
     }
 
     // TODO:
-    // Standardize monster object to be easier to edit
-    // Make modal that will allow to edit anything
+    // Move iniative order to be a row above the search and make it have scrollable overflow x
     // on hover for side bar will highlight the player/monster it represents
     // Make the skills & actions look better with a table
     // Add top section that will hold PCs

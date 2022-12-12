@@ -1,76 +1,73 @@
 const t = {
-    index: '',
+    id: '',
     name: '',
     desc: '',
     hp: 0,
     ac: 0,
-    chanllengeRating: 0,
-    speed: [
-        {
-            type: '', // walk, swim, climb, fly, burrow
-            value: ''
-        }
-    ],
+    languages: '',
+    xp: 0,
     stats: [
         {
             name: '',
             value: 0,
-            modifier: ''
+            modifier: 0
         }
     ],
-    proficencies: [
+    movement: [],
+    senses: [
         {
-            type: '',
             name: '',
             value: ''
         }
     ],
-    senses: [
-        {
-            type: '', // passive_perception, blindsight, darkvision, tremorsense, truesight
-            value: ''
-        }
-    ],
-    conditionImmunities: '',
-    damageImmunities: '',
-    damageResistances: '',
-    damageVulnerabilities: '',
     actions: [
         {
             name: '',
             desc: '',
             usage: {
+                type: '',
                 dice: '',
-                minValue: 0,
-                type: ''
+                minValue: 0
+            }
+        }
+    ],
+    legendaryActions: [        
+        {
+            name: '',
+            desc: '',
+            usage: {
+                type: '',
+                dice: '',
+                minValue: 0
             }
         }
     ],
     reactions: [
         {
             name: '',
-            desc: ''
-        }
-    ],
-    legendaryActions: [
-        {
-            name: '',
             desc: '',
             usage: {
+                type: '',
                 dice: '',
-                minValue: 0,
-                type: ''
+                minValue: 0
             }
         }
     ],
-    languages: '',
+    proficiencies: [
+        {
+            type: '',
+            name: '',
+            value: 0
+        }
+    ],
+    damageVulnerabilities: [''],
+    damageResistances: [''],
+    damageImmunities: [''],
+    conditionImmunities: [''],
     specialAbilities: [
         {
             name: '',
-            desc: '',
-            spellcasting: {
-                
-            }
+            desc: ''
         }
     ]
 }
