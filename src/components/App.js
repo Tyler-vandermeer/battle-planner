@@ -164,7 +164,6 @@ class App extends React.Component {
     // Make it save data to local storage so it remembers where you left off (need to save monster names, health, modifiers, initiative)
     // Maybe make it so it can be exported to a json file
     // Maybe change the mouse events for changing the iniative for players
-    // temp
 
     render() {
         return (
