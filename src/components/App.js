@@ -153,7 +153,6 @@ class App extends React.Component {
 
     // TODO:
     // Move iniative order to be a row above the search and make it have scrollable overflow x
-    // on hover for side bar will highlight the player/monster it represents
     // Make the skills & actions look better with a table
     // Add top section that will hold PCs
     // Add current condition effects to monster
