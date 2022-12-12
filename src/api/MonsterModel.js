@@ -5,7 +5,7 @@ import ContentLine from '../components/ContentLine';
 export default class MonsterModel {
     constructor(id, monster) {
         this.id = id;
-        this.init(monster);
+        monster && this.init(monster);
     }
 
     getSenses() {

@@ -7,8 +7,8 @@ import MonsterModal from './MonsterModal';
 const Monster = (props) => {
     const monster = props.data.monster;
 
-    const [currentHealth, setCurrentHealth] = useState(monster.hp);
-    useEffect(() => { setCurrentHealth(monster.hp) }, [monster.hp]);
+    const [currentHealth, setCurrentHealth] = useState(monster.currentHealth ?? monster.hp);
+    useEffect(() => { setCurrentHealth(monster.currentHealth ?? monster.hp) }, [monster.currentHealth, monster.hp]);
 
     const [edit, setEdit] = useState(false);
     const [rotate, setRotate] = useState(false);
@@ -27,7 +27,13 @@ const Monster = (props) => {
         )
     });
 
-    const onClickEdit = (ev) => setEdit(previous => !previous);
+    const onClickEdit = (ev) => {
+        // if edit is true monster modal is currently open and the monster has been updated
+        if (edit)
+            props.handleMonsterUpdate(props.data.id, monster);
+
+        setEdit(previous => !previous);
+    }
 
     const onClickX = (ev) => {
         props.handleRemoveMonster(props.data.id)
@@ -36,7 +42,12 @@ const Monster = (props) => {
     const handleHealthChange = (ev) => {
         setCurrentHealth((previous) => {
             const newValue = previous + ~~ev.target.value;
-            return Math.min(Math.max(newValue, 0), monster.hp);;
+
+            monster.currentHealth = Math.min(Math.max(newValue, 0), monster.hp);
+
+            props.handleMonsterUpdate(props.data.id, monster);
+
+            return monster.currentHealth;
         });
     }
 

@@ -5,6 +5,7 @@ import SearchBar from './SearchBar';
 import dnd5e from '../api/dnd5e';
 import Player from './Player';
 import MonsterModel from '../api/MonsterModel';
+import * as Constants from '../Helpers/Constants';
 
 class App extends React.Component {
     state = {
@@ -15,19 +16,15 @@ class App extends React.Component {
         }
     };
 
-    createMonsterObj = (monster) => {
-        console.log(monster);
-
-    }
-
     // Maybe move api access methods into the api class
     addMonster = async (monsterName) => {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
         const monster = response.data;
 
         const monsterModel = new MonsterModel(this.getMonsterIndex(monster.index), monster);
-        
-        this.setState({ monsters: [{ id: monsterModel.id, monster: monsterModel }, ...this.state.monsters] });
+
+        this.setState({ monsters: [{ id: monsterModel.id, monster: monsterModel }, ...this.state.monsters] }
+            , () => localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.monsters)));
     }
 
     getMonsterIndex = (monsterIndex) => {
@@ -40,16 +37,29 @@ class App extends React.Component {
     }
 
     init = async () => {
-        await this.addMonster('aboleth');
-        // await this.addMonster('goblin');
-        // await this.addMonster('goblin');
-        // await this.addMonster('goblin');
-        // await this.addMonster('goblin');
+        const existingMonsters = JSON.parse(localStorage.getItem(Constants.LocalStorageKey));
+
+        if (process.env.NODE_ENV !== 'production') {
+            if (!existingMonsters || existingMonsters.length === 0) {
+                await this.addMonster('aboleth');
+            }
+        }
+
+        if (existingMonsters && existingMonsters.length > 0) {
+            const assignedMonsters = [];
+            
+            for(var monster of existingMonsters) {
+                const m = new MonsterModel(monster.id);
+                m.updateProperties(monster.monster);
+                assignedMonsters.push({ id: monster.id, monster: m });
+            }
+
+            this.setState({ monsters: assignedMonsters })
+        }
     }
 
     componentDidMount() {
-        if (process.env.NODE_ENV !== 'production')
-            this.init();
+        this.init();
         this.loadMonsters();
     }
 
@@ -62,7 +72,7 @@ class App extends React.Component {
         };
 
         for (let i = 0; i < this.state.monsters.length; i++) {
-            const monster = <Monster key={i} index={i} data={this.state.monsters[i]} handleRemoveMonster={this.handleRemoveMonster} />;
+            const monster = <Monster key={i} index={i} data={this.state.monsters[i]} handleRemoveMonster={this.handleRemoveMonster} handleMonsterUpdate={this.handleMonsterUpdate} />;
             switch (i % 3) {
                 case 0: grid.c1.push(monster); break;
                 case 1: grid.c2.push(monster); break;
@@ -128,6 +138,17 @@ class App extends React.Component {
 
     handleRemoveMonster = (id) => {
         this.setState({ monsters: this.state.monsters.filter(x => x.id !== id) });
+    }
+
+    handleMonsterUpdate = (id, monster) => {
+        const newMonsters = this.state.monsters.map(obj => {
+            if (obj.id === id) {
+                obj.monster = monster;
+            }
+            return obj;
+        });
+
+        this.setState({ monsters: newMonsters}, localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.monsters)));
     }
 
     // TODO:
