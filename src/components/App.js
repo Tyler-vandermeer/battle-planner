@@ -13,7 +13,8 @@ class App extends React.Component {
             Rohkume: { name: 'Rohkume', portrait: 'half-orc-icon.png', AC: '17', speed: '30 ft.', iniative: 0, stats: [16, 13, 16, 12, 17, 9] },
             Faen: { name: 'Faen', portrait: 'elf-icon.png', AC: '11', speed: '35 ft.', iniative: 0, stats: [9, 13, 12, 13, 16, 16] },
             Ash: { name: 'Ash', portrait: 'dragonborn-icon.png', AC: '13', speed: '30 ft.', iniative: 0, stats: [17, 13, 13, 11, 9, 10] }
-        }
+        },
+        scrollCoverClass: 'scrollCover'
     };
 
     // Maybe move api access methods into the api class
@@ -47,8 +48,8 @@ class App extends React.Component {
 
         if (existingMonsters && existingMonsters.length > 0) {
             const assignedMonsters = [];
-            
-            for(var monster of existingMonsters) {
+
+            for (var monster of existingMonsters) {
                 const m = new MonsterModel(monster.id);
                 m.updateProperties(monster.monster);
                 assignedMonsters.push({ id: monster.id, monster: m });
@@ -123,9 +124,9 @@ class App extends React.Component {
 
         return characterList.map((v, i) => {
             return (
-                <Card key={i} data-id={v.index} onMouseEnter={this.highlightCharacter} onMouseLeave={this.unhiglightCharacter}>
+                <Card className='iniativeCard' key={i} data-id={v.index} onMouseEnter={this.highlightCharacter} onMouseLeave={this.unhiglightCharacter}>
                     <Card.Content>
-                        <Card.Header>{v.name}: {v.iniative}</Card.Header>
+                        {v.name}: {v.iniative}
                     </Card.Content>
                 </Card>
             )
@@ -148,22 +149,31 @@ class App extends React.Component {
             return obj;
         });
 
-        this.setState({ monsters: newMonsters}, localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.monsters)));
+        this.setState({ monsters: newMonsters }, localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.monsters)));
+    }
+
+    showTimeout;
+    handleHideIniative = () => {
+        this.setState({ scrollCoverClass: 'scrollCover hidden' });
+        clearTimeout(this.showTimeout);
+        this.showTimeout = setTimeout(() => {
+            this.setState({ scrollCoverClass: 'scrollCover' });
+        }, 500);
     }
 
     // TODO:
-    // Move iniative order to be a row above the search and make it have scrollable overflow x
+    // Make player cards look like monster cards
+    // Make iniative editable
+    // Add + button in bottom right with option to look up monster or add a custom player/monster (Maybe just do players first)
+    // Have a section for players and a section for monsters
+    // Maybe change the mouse events for changing the iniative for players
     // Make the skills & actions look better with a table
-    // Add top section that will hold PCs
     // Add current condition effects to monster
     // maybe make descriptions of abilities tool tips
     // add tool tips for spells
-    // Add component for editable field for changing stats
     // Have some of them be able to be temprary additions (modifiers)
     // Add desc tooltip for the monster
-    // Make it save data to local storage so it remembers where you left off (need to save monster names, health, modifiers, initiative)
     // Maybe make it so it can be exported to a json file
-    // Maybe change the mouse events for changing the iniative for players
 
     render() {
         return (
@@ -175,21 +185,17 @@ class App extends React.Component {
                     <Player {...this.state.players.Ash} updateIniative={this.updatePlayerIniative} />
                 </Card.Group>
                 <Divider />
+                <div style={{ position: 'relative' }}>
+                    <Container className='iniativeContainer' onScroll={this.handleHideIniative} onMouseMove={this.handleHideIniative}>
+                        {this.iniativeOrder()}
+                    </Container>
+                    <div className={this.state.scrollCoverClass} />
+                </div>
+                <Divider />
                 <SearchBar options={this.state.searchOptions} onSubmit={this.handleSearchSubmit} />
                 <br />
-                <Grid>
-                    <Grid.Row>
-                        <Grid.Column width={14}>
-                            <Grid relaxed stackable padded columns={3}>
-                                {this.monsters()}
-                            </Grid>
-                        </Grid.Column>
-                        <Grid.Column width={2}>
-                            <Container style={{ paddingTop: '1rem' }}>
-                                {this.iniativeOrder()}
-                            </Container>
-                        </Grid.Column>
-                    </Grid.Row>
+                <Grid relaxed stackable padded columns={3}>
+                    {this.monsters()}
                 </Grid>
             </Container>
         )
