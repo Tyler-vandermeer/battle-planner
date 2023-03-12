@@ -92,7 +92,7 @@ div[role="healthWheel"] {
     float: left;
 }
 
-div[role="healthWheel"] > div {
+div[role="healthWheel"]>div {
     margin: 5px;
 }
 
@@ -102,4 +102,53 @@ div[role="healthWheel"] > div {
 
 .highlight {
     border: 1px solid black !important;
+}
+
+.iniativeContainer::-webkit-scrollbar {
+    height: 0.3em;
+}
+
+.iniativeContainer::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+}
+
+.iniativeContainer::-webkit-scrollbar-track {
+    background-color: #fff;
+}
+
+.iniativeContainer {
+    display: flex !important;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    height: max-content;
+    padding-top: 0.3em;
+}
+
+.iniativeCard {
+    flex: 0 0 auto;
+    width: 10em !important;
+    height: 3em;
+    margin: 0.5em 0.25em !important;
+}
+
+.iniativeCard>.content {
+    padding: 0.5em !important;
+}
+
+.scrollCover {
+    position: absolute;
+    background: #fff;
+    pointer-events: none;
+    width: 100%;
+    height: 0.4em;
+    bottom: -1px;
+    -webkit-transition: all .4s;
+    transition: all .4s;
+    opacity: 1;
+}
+
+
+.scrollCover.hidden {
+    opacity: 0;
 }
