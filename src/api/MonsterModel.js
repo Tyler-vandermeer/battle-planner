@@ -44,7 +44,7 @@ export default class MonsterModel {
         this.name = monster.name;
         this.desc = `${monster.size} ${monster.type} ${monster.subtype === undefined ? '' : `(${monster.subtype})`}${monster.alignment}`;
         this.hp = monster.hit_points;
-        this.ac = monster.armor_class;
+        this.ac = monster.armor_class.value;
         this.iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
         this.languages = monster.languages;
         this.xp = monster.xp;
