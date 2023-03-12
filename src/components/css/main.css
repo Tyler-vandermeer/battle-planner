@@ -2,12 +2,12 @@
     width: 100% !important;
 }
 
-.monsterTable {
+.statBlockTable {
     border: none !important;
     text-align: center !important;
 }
 
-.monsterTable td {
+.statBlockTable td {
     margin: 0;
     padding: 0.25em 0 !important;
     border: none !important;
@@ -123,6 +123,7 @@ div[role="healthWheel"]>div {
     overflow-y: hidden;
     height: max-content;
     padding-top: 0.3em;
+    justify-content: center;
 }
 
 .iniativeCard {

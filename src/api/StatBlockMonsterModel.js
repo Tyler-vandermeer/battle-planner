@@ -1,19 +1,12 @@
 
 import { getModifierValue } from '../Helpers/Helpers'
 import ContentLine from '../components/ContentLine';
+import StatBlock from './StatBlockModel';
 
-export default class MonsterModel {
-    constructor(id, monster) {
-        this.id = id;
-        monster && this.init(monster);
-    }
-
-    getSenses() {
-        return this.senses.map((v) => `${v.name} ${v.value}`).join(', ');
-    }
-
-    getMovement() {
-        return this.movement.map((v) => <ContentLine key={v.name} label={v.name} value={v.value} />);
+export default class StatBlockMonsterModel extends StatBlock {
+    constructor(id, statBlock) {
+        super(id, statBlock, 'monster');
+        statBlock && this.init(statBlock);
     }
 
     getProficiencies() {
@@ -46,53 +39,9 @@ export default class MonsterModel {
         this.hp = monster.hit_points;
         this.ac = monster.armor_class[0].value;
         this.iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
-        this.languages = monster.languages;
-        this.xp = monster.xp;
-        this.conditionImmunities = monster.condition_immunities;
-        this.damageImmunities = monster.damage_immunities;
-        this.damageResistances = monster.damage_resistances;
-        this.damageVulnerabilities = monster.damage_vulnerabilities;
-        this.challengeRating = monster.challenge_rating;
-
+        
         this.setStatsArray(monster);
         this.movement = this.getNameValueList(monster.speed);
-        this.senses = this.getNameValueList(monster.senses);
-        this.setProficienciesList(monster);
-        this.specialAbilities = this.getAbilities(monster.special_abilities);
-        this.actions = this.getAbilities(monster.actions);
-        this.legendaryActions = this.getAbilities(monster.legendary_actions);
-        this.reactions = this.getAbilities(monster.reactions);
-    }
-
-    updateProperties(monsterProps) {
-        for (let key in monsterProps)
-            this[key] = monsterProps[key];
-        this.updateStatModifiers();
-    }
-
-    updateStatModifiers() {
-        for (var stat of this.stats)
-            stat.modifier = getModifierValue(stat.value);
-    }
-
-    setStatsArray(monster) {
-        this.stats = [];
-        for (var statName of ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']) {
-            const value = monster[statName];
-            this.stats.push({
-                name: statName.slice(0, 3).toUpperCase(),
-                value: value,
-                modifier: getModifierValue(value)
-            });
-        }
-    }
-
-    getNameValueList(property, isValueNumber = false) {
-        const nameValues = [];
-        for (let k in property) {
-            nameValues.push({ name: k, value: isValueNumber ? property[k] : `${property[k]}` });
-        }
-        return nameValues;
     }
 
     setProficienciesList(monster) {

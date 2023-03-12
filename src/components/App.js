@@ -1,11 +1,12 @@
 import React from 'react';
 import { Container, Header, Grid, Card, Divider } from 'semantic-ui-react';
-import Monster from './Monster';
 import SearchBar from './SearchBar';
 import dnd5e from '../api/dnd5e';
 import Player from './Player';
-import MonsterModel from '../api/MonsterModel';
+import StatBlockMonsterModel from '../api/StatBlockMonsterModel';
 import * as Constants from '../Helpers/Constants';
+import StatBlockBase from './StatBlockBase';
+import StatBlockActions from './StatBlockActions';
 
 class App extends React.Component {
     state = {
@@ -22,7 +23,7 @@ class App extends React.Component {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
         const monster = response.data;
 
-        const monsterModel = new MonsterModel(this.getMonsterIndex(monster.index), monster);
+        const monsterModel = new StatBlockMonsterModel(this.getMonsterIndex(monster.index), monster);
 
         this.setState({ monsters: [{ id: monsterModel.id, monster: monsterModel }, ...this.state.monsters] }
             , () => localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.monsters)));
@@ -42,7 +43,7 @@ class App extends React.Component {
 
         if (process.env.NODE_ENV !== 'production') {
             if (!existingMonsters || existingMonsters.length === 0) {
-                await this.addMonster('aboleth');
+                await this.addMonster('goblin');
             }
         }
 
@@ -50,11 +51,11 @@ class App extends React.Component {
             const assignedMonsters = [];
 
             for (var monster of existingMonsters) {
-                const m = new MonsterModel(monster.id);
+                const m = new StatBlockMonsterModel(monster.id);
                 m.updateProperties(monster.monster);
                 assignedMonsters.push({ id: monster.id, monster: m });
             }
-
+            
             this.setState({ monsters: assignedMonsters })
         }
     }
@@ -64,24 +65,28 @@ class App extends React.Component {
         this.loadMonsters();
     }
 
-    // This coul probably be moved to a separate monster grid component
-    monsters = () => {
+    // This could probably be moved to a separate monster grid component
+    statBlocks = (characters, includeActions = true) => {
         const grid = {
             c1: [],
             c2: [],
             c3: []
         };
 
-        for (let i = 0; i < this.state.monsters.length; i++) {
-            const monster = <Monster key={i} index={i} data={this.state.monsters[i]} handleRemoveMonster={this.handleRemoveMonster} handleMonsterUpdate={this.handleMonsterUpdate} />;
+        for (let i = 0; i < characters.length; i++) {
+            const statBlock = (
+                <StatBlockBase key={i} index={i} data={characters[i]} handleRemoveMonster={this.handleRemoveMonster} handleMonsterUpdate={this.handleMonsterUpdate} >
+                    { includeActions ? <StatBlockActions data={characters[i]} /> : <></> }
+                </StatBlockBase>
+            )
+
             switch (i % 3) {
-                case 0: grid.c1.push(monster); break;
-                case 1: grid.c2.push(monster); break;
-                case 2: grid.c3.push(monster); break;
+                case 0: grid.c1.push(statBlock); break;
+                case 1: grid.c2.push(statBlock); break;
+                case 2: grid.c3.push(statBlock); break;
                 default: break;
             }
         }
-
         return (
             <Grid.Row>
                 <Grid.Column>{grid.c1}</Grid.Column>
@@ -163,6 +168,7 @@ class App extends React.Component {
 
     // TODO:
     // Make player cards look like monster cards
+    // AC value changed from api. Maybe change how it's displayed
     // Make iniative editable
     // Add + button in bottom right with option to look up monster or add a custom player/monster (Maybe just do players first)
     // Have a section for players and a section for monsters
@@ -172,7 +178,6 @@ class App extends React.Component {
     // maybe make descriptions of abilities tool tips
     // add tool tips for spells
     // Have some of them be able to be temprary additions (modifiers)
-    // Add desc tooltip for the monster
     // Maybe make it so it can be exported to a json file
 
     render() {
@@ -195,7 +200,7 @@ class App extends React.Component {
                 <SearchBar options={this.state.searchOptions} onSubmit={this.handleSearchSubmit} />
                 <br />
                 <Grid relaxed stackable padded columns={3}>
-                    {this.monsters()}
+                    {this.statBlocks(this.state.monsters)}
                 </Grid>
             </Container>
         )
