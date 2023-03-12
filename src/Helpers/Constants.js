@@ -1,1 +1,1 @@
-export const LocalStorageKey = "monsterData";
+export const LocalStorageKey = "statBlocks";

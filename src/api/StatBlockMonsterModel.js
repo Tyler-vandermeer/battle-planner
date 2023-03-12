@@ -1,5 +1,3 @@
-
-import { getModifierValue } from '../Helpers/Helpers'
 import ContentLine from '../components/ContentLine';
 import StatBlock from './StatBlockModel';
 
@@ -34,14 +32,22 @@ export default class StatBlockMonsterModel extends StatBlock {
     }
 
     init(monster) {
-        this.name = monster.name;
-        this.desc = `${monster.size} ${monster.type} ${monster.subtype === undefined ? '' : `(${monster.subtype})`}${monster.alignment}`;
-        this.hp = monster.hit_points;
-        this.ac = monster.armor_class[0].value;
-        this.iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(monster.dexterity);
-        
-        this.setStatsArray(monster);
-        this.movement = this.getNameValueList(monster.speed);
+        this.languages = monster.languages;
+        this.xp = monster.xp;
+        this.conditionImmunities = monster.condition_immunities;
+        this.damageImmunities = monster.damage_immunities;
+        this.damageResistances = monster.damage_resistances;
+        this.damageVulnerabilities = monster.damage_vulnerabilities;
+        this.challengeRating = monster.challenge_rating;
+
+        this.senses = this.getNameValueList(monster.senses);
+        this.setProficienciesList(monster);
+        this.specialAbilities = this.getAbilities(monster.special_abilities);
+        this.actions = this.getAbilities(monster.actions);
+        this.legendaryActions = this.getAbilities(monster.legendary_actions);
+        this.reactions = this.getAbilities(monster.reactions);
+
+        super.init(monster);
     }
 
     setProficienciesList(monster) {

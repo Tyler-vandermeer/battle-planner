@@ -1,16 +1,16 @@
 import React from 'react';
-import { Container, Header, Grid, Card, Divider } from 'semantic-ui-react';
-import SearchBar from './SearchBar';
+import { Card, Container, Divider, Grid, Header, Icon } from 'semantic-ui-react';
 import dnd5e from '../api/dnd5e';
-import Player from './Player';
 import StatBlockMonsterModel from '../api/StatBlockMonsterModel';
 import * as Constants from '../Helpers/Constants';
-import StatBlockBase from './StatBlockBase';
+import Player from './Player';
+import SearchBar from './SearchBar';
 import StatBlockActions from './StatBlockActions';
+import StatBlockBase from './StatBlockBase';
 
 class App extends React.Component {
     state = {
-        monsters: [], searchOptions: [], players: {
+        statBlocks: [], searchOptions: [], players: {
             Rohkume: { name: 'Rohkume', portrait: 'half-orc-icon.png', AC: '17', speed: '30 ft.', iniative: 0, stats: [16, 13, 16, 12, 17, 9] },
             Faen: { name: 'Faen', portrait: 'elf-icon.png', AC: '11', speed: '35 ft.', iniative: 0, stats: [9, 13, 12, 13, 16, 16] },
             Ash: { name: 'Ash', portrait: 'dragonborn-icon.png', AC: '13', speed: '30 ft.', iniative: 0, stats: [17, 13, 13, 11, 9, 10] }
@@ -23,14 +23,14 @@ class App extends React.Component {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
         const monster = response.data;
 
-        const monsterModel = new StatBlockMonsterModel(this.getMonsterIndex(monster.index), monster);
+        const statBlock = new StatBlockMonsterModel(this.getMonsterIndex(monster.index), monster);
 
-        this.setState({ monsters: [{ id: monsterModel.id, monster: monsterModel }, ...this.state.monsters] }
-            , () => localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.monsters)));
+        this.setState({ statBlocks: [{ id: statBlock.id, monster: statBlock }, ...this.state.statBlocks] }
+            , () => localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.statBlocks)));
     }
 
     getMonsterIndex = (monsterIndex) => {
-        return monsterIndex + this.state.monsters.filter(x => x.monster.index === monsterIndex).length;
+        return monsterIndex + this.state.statBlocks.filter(x => x.monster.index === monsterIndex).length;
     }
 
     loadMonsters = async () => {
@@ -87,6 +87,7 @@ class App extends React.Component {
                 default: break;
             }
         }
+
         return (
             <Grid.Row>
                 <Grid.Column>{grid.c1}</Grid.Column>
@@ -119,7 +120,7 @@ class App extends React.Component {
     iniativeOrder = () => {
         const players = this.state.players;
         var characterList = [
-            ...this.state.monsters.map((v) => { return { name: v.monster.name, iniative: v.monster.iniative, index: v.id } }),
+            ...this.state.statBlocks.map((v) => { return { name: v.monster.name, iniative: v.monster.iniative, index: v.id } }),
             { name: players.Rohkume.name, iniative: players.Rohkume.iniative, index: players.Rohkume.name },
             { name: players.Faen.name, iniative: players.Faen.iniative, index: players.Faen.name },
             { name: players.Ash.name, iniative: players.Ash.iniative, index: players.Ash.name }
@@ -143,18 +144,18 @@ class App extends React.Component {
     }
 
     handleRemoveMonster = (id) => {
-        this.setState({ monsters: this.state.monsters.filter(x => x.id !== id) });
+        this.setState({ monsters: this.state.statBlocks.filter(x => x.id !== id) });
     }
 
     handleMonsterUpdate = (id, monster) => {
-        const newMonsters = this.state.monsters.map(obj => {
+        const newMonsters = this.state.statBlocks.map(obj => {
             if (obj.id === id) {
                 obj.monster = monster;
             }
             return obj;
         });
 
-        this.setState({ monsters: newMonsters }, localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.monsters)));
+        this.setState({ monsters: newMonsters }, localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.statBlocks)));
     }
 
     showTimeout;
@@ -200,8 +201,10 @@ class App extends React.Component {
                 <SearchBar options={this.state.searchOptions} onSubmit={this.handleSearchSubmit} />
                 <br />
                 <Grid relaxed stackable padded columns={3}>
-                    {this.statBlocks(this.state.monsters)}
+                    {this.statBlocks(this.state.statBlocks)}
                 </Grid>
+                <Icon className='addStatBlock back circle huge'></Icon>
+                <Icon className='addStatBlock front plus circle huge'></Icon>
             </Container>
         )
     };

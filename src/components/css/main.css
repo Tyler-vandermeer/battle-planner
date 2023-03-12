@@ -153,3 +153,17 @@ div[role="healthWheel"]>div {
 .scrollCover.hidden {
     opacity: 0;
 }
+
+.addStatBlock {
+    position: fixed;
+    bottom: 10px;
+    right: 5px;
+}
+
+.addStatBlock.front {
+    color: #21ba45;
+}
+
+.addStatBlock.back {
+    color: white;
+}
