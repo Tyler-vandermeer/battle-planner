@@ -32,20 +32,22 @@ export default class StatBlockMonsterModel extends StatBlock {
     }
 
     init(statBlock) {
-        this.languages = statBlock.languages;
-        this.xp = statBlock.xp;
-        this.conditionImmunities = statBlock.condition_immunities;
-        this.damageImmunities = statBlock.damage_immunities;
-        this.damageResistances = statBlock.damage_resistances;
-        this.damageVulnerabilities = statBlock.damage_vulnerabilities;
-        this.challengeRating = statBlock.challenge_rating;
+        if (statBlock) {
+            this.languages = statBlock.languages;
+            this.xp = statBlock.xp;
+            this.conditionImmunities = statBlock.condition_immunities;
+            this.damageImmunities = statBlock.damage_immunities;
+            this.damageResistances = statBlock.damage_resistances;
+            this.damageVulnerabilities = statBlock.damage_vulnerabilities;
+            this.challengeRating = statBlock.challenge_rating;
 
-        this.senses = this.getNameValueList(statBlock.senses);
-        this.setProficienciesList(statBlock);
-        this.specialAbilities = this.getAbilities(statBlock.special_abilities);
-        this.actions = this.getAbilities(statBlock.actions);
-        this.legendaryActions = this.getAbilities(statBlock.legendary_actions);
-        this.reactions = this.getAbilities(statBlock.reactions);
+            this.senses = this.getNameValueList(statBlock.senses);
+            this.setProficienciesList(statBlock);
+            this.specialAbilities = this.getAbilities(statBlock.special_abilities);
+            this.actions = this.getAbilities(statBlock.actions);
+            this.legendaryActions = this.getAbilities(statBlock.legendary_actions);
+            this.reactions = this.getAbilities(statBlock.reactions);
+        }
 
         super.init(statBlock);
     }

@@ -4,6 +4,8 @@ import { Modal, Icon, Form, Button, Grid } from 'semantic-ui-react';
 const StatBlockModal = ({ open, toggleOpen, statBlock }) => {
     const [localStatBlock, setLocalStatBlock] = useState(statBlock);
 
+    // TODO add way to modify speed
+
     const onChangeProperty = (ev) => {
         const key = ev.target.dataset.key;
         const index = ev.target.dataset.index;
@@ -30,7 +32,7 @@ const StatBlockModal = ({ open, toggleOpen, statBlock }) => {
         toggleOpen();
     }
 
-    const stats = localStatBlock?.stats.map((v, i) => {
+    const stats = localStatBlock.stats.map((v, i) => {
         return (
             <Grid.Column key={i}>
                 <Form.Field>
@@ -44,15 +46,12 @@ const StatBlockModal = ({ open, toggleOpen, statBlock }) => {
     return (
         <Modal
             open={open}
-            onOpen={(e) => {
-                console.log('init');
-            }}
             onClose={toggleOpen}
             closeOnDimmerClick={true}
             closeOnEscape={true}
         >
             <Icon className='absRight' style={{ top: '0.15em' }} onClick={() => toggleOpen()} link name='cancel' />
-            <Modal.Header>{localStatBlock?.name}</Modal.Header>
+            <Modal.Header>{localStatBlock.name ?? 'New Stat Block'}</Modal.Header>
             <Modal.Content>
                 <Form>
                     <Grid columns={2}>
@@ -66,7 +65,7 @@ const StatBlockModal = ({ open, toggleOpen, statBlock }) => {
                             <Grid.Column>
                                 <Form.Field>
                                     <label htmlFor='desc'>Description:</label>
-                                    <Form.TextArea type='textarea' data-key='desc' value={localStatBlock?.desc} onChange={onChangeProperty} />
+                                    <Form.TextArea type='textarea' data-key='desc' value={localStatBlock.desc} onChange={onChangeProperty} />
                                 </Form.Field>
                             </Grid.Column>
                         </Grid.Row>
@@ -74,19 +73,19 @@ const StatBlockModal = ({ open, toggleOpen, statBlock }) => {
                             <Grid.Column>
                                 <Form.Field>
                                     <label htmlFor='maxHp'>Max HP:</label>
-                                    <input id='maxHp' type='number' data-key="hp" value={localStatBlock?.hp} onChange={onChangeProperty} />
+                                    <input id='maxHp' type='number' data-key="hp" value={localStatBlock.hp} onChange={onChangeProperty} />
                                 </Form.Field>
                             </Grid.Column>
                             <Grid.Column>
                                 <Form.Field>
                                     <label htmlFor='ac'>AC:</label>
-                                    <input id='ac' type='number' data-key="ac" value={localStatBlock?.ac} onChange={onChangeProperty} />
+                                    <input id='ac' type='number' data-key="ac" value={localStatBlock.ac} onChange={onChangeProperty} />
                                 </Form.Field>
                             </Grid.Column>
                             <Grid.Column>
                                 <Form.Field>
                                     <label htmlFor='iniative'>Iniative:</label>
-                                    <input id='iniative' type='number' data-key="iniative" value={localStatBlock?.iniative} onChange={onChangeProperty} />
+                                    <input id='iniative' type='number' data-key="iniative" value={localStatBlock.iniative} onChange={onChangeProperty} />
                                 </Form.Field>
                             </Grid.Column>
                         </Grid.Row>
@@ -94,10 +93,10 @@ const StatBlockModal = ({ open, toggleOpen, statBlock }) => {
 
                     <Grid columns={3}>
                         <Grid.Row>
-                            {stats?.slice(0, 3)}
+                            {stats.slice(0, 3)}
                         </Grid.Row>
                         <Grid.Row>
-                            {stats?.slice(3)}
+                            {stats.slice(3)}
                         </Grid.Row>
                     </Grid>
 

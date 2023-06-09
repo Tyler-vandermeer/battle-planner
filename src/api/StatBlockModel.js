@@ -6,7 +6,7 @@ export default class StatBlock {
     constructor(id, statBlock, type) {
         this.id = id;
         this.type = type;
-        statBlock && this.init(statBlock);
+        this.init(statBlock);
     }
 
     getSenses() {
@@ -18,14 +18,13 @@ export default class StatBlock {
     }
 
     init(statBlock) {
-        this.name = statBlock.name;
-        this.desc = `${statBlock.size} ${statBlock.type} ${statBlock.subtype === undefined ? '' : `(${statBlock.subtype})`}${statBlock.alignment}`;
-        this.hp = statBlock.hit_points;
-        this.ac = statBlock.armor_class[0].value;
-        this.iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(statBlock.dexterity);
-
+        this.name = statBlock?.name ?? '';
+        this.desc = statBlock ? `${statBlock.size} ${statBlock.type} ${statBlock.subtype === undefined ? '' : `(${statBlock.subtype})`}${statBlock.alignment}` : '';
+        this.hp = statBlock?.hit_points ?? 0;
+        this.ac = statBlock?.armor_class[0].value ?? 0;
+        this.iniative = Math.floor(Math.random() * 20 + 1) + getModifierValue(statBlock?.dexterity ?? 10);
+        this.movement = statBlock ? this.getNameValueList(statBlock.speed) : '';
         this.setStatsArray(statBlock);
-        this.movement = this.getNameValueList(statBlock.speed);
     }
 
     updateProperties(statBlockProps) {
@@ -42,7 +41,7 @@ export default class StatBlock {
     setStatsArray(statBlock) {
         this.stats = [];
         for (var statName of ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']) {
-            const value = statBlock[statName];
+            const value = statBlock ? statBlock[statName] : 10;
             this.stats.push({
                 name: statName.slice(0, 3).toUpperCase(),
                 value: value,

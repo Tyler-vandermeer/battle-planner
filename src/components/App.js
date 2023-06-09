@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Container, Divider, Grid, Header, Icon } from 'semantic-ui-react';
 import dnd5e from '../api/dnd5e';
 import StatBlockMonsterModel from '../api/StatBlockMonsterModel';
+import StatBlockModel from '../api/StatBlockModel';
 import * as Constants from '../Helpers/Constants';
 import Player from './Player';
 import SearchBar from './SearchBar';
@@ -17,7 +18,7 @@ class App extends React.Component {
             Ash: { name: 'Ash', portrait: 'dragonborn-icon.png', AC: '13', speed: '30 ft.', iniative: 0, stats: [17, 13, 13, 11, 9, 10] }
         },
         scrollCoverClass: 'scrollCover',
-        selectedStatBlock: null, editOpen: false
+        selectedStatBlock: new StatBlockModel(-1, null, 'new'), editOpen: false
     };
 
     // Maybe move api access methods into the api class
@@ -25,14 +26,20 @@ class App extends React.Component {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
         const monster = response.data;
 
-        const statBlock = new StatBlockMonsterModel(this.getMonsterIndex(monster.index), monster);
+        const statBlock = new StatBlockMonsterModel(this.getMonsterIndex(), monster);
 
         this.setState({ statBlocks: [{ id: statBlock.id, statBlock: statBlock }, ...this.state.statBlocks] }
-            , () => localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.statBlocks)));
+            , this.updateLocalStorage);
     }
 
-    getMonsterIndex = (monsterIndex) => {
-        return monsterIndex + this.state.statBlocks.filter(x => x.statBlock.index === monsterIndex).length;
+    updateLocalStorage = () => {
+        localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.statBlocks))
+    }
+
+    getMonsterIndex = () => {
+        let ids = this.state.statBlocks.map(v => v.id);
+        let newId = Math.max(...ids) + 1;
+        return ids.length === 0 ? 0 : newId;
     }
 
     loadMonsters = async () => {
@@ -70,6 +77,7 @@ class App extends React.Component {
 
     // This could probably be moved to a separate stat block grid component
     statBlocks = (characters, includeActions = true) => {
+        //Add logic to order by the statblock type
         const grid = {
             c1: [],
             c2: [],
@@ -147,7 +155,7 @@ class App extends React.Component {
     }
 
     handleRemoveStatBlock = (id) => {
-        this.setState({ statBlocks: this.state.statBlocks.filter(x => x.id !== id) });
+        this.setState({ statBlocks: this.state.statBlocks.filter(x => x.id !== id) }, this.updateLocalStorage);
     }
 
     handleStatBlockUpdate = (id, statBlock) => {
@@ -179,7 +187,7 @@ class App extends React.Component {
     }
 
     handleAddStatBlock = (ev) => {
-
+        this.setState({selectedStatBlock: new StatBlockModel(-1, null, 'new')}, this.toggleModal());
     }
 
     // TODO:
@@ -200,11 +208,11 @@ class App extends React.Component {
         return (
             <Container textAlign='center' fluid>
                 <Header as='h2'>Battle Tracker</Header>
-                <Card.Group centered>
+                {/* <Card.Group centered>
                     <Player {...this.state.players.Rohkume} updateIniative={this.updatePlayerIniative} />
                     <Player {...this.state.players.Faen} updateIniative={this.updatePlayerIniative} />
                     <Player {...this.state.players.Ash} updateIniative={this.updatePlayerIniative} />
-                </Card.Group>
+                </Card.Group> */}
                 <Divider />
                 <div style={{ position: 'relative' }}>
                     <Container className='iniativeContainer' onScroll={this.handleHideIniative} onMouseMove={this.handleHideIniative}>
