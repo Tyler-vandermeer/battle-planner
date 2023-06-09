@@ -7,6 +7,7 @@ import Player from './Player';
 import SearchBar from './SearchBar';
 import StatBlockActions from './StatBlockActions';
 import StatBlockBase from './StatBlockBase';
+import StatBlockModal from './StatBlockModal';
 
 class App extends React.Component {
     state = {
@@ -15,7 +16,8 @@ class App extends React.Component {
             Faen: { name: 'Faen', portrait: 'elf-icon.png', AC: '11', speed: '35 ft.', iniative: 0, stats: [9, 13, 12, 13, 16, 16] },
             Ash: { name: 'Ash', portrait: 'dragonborn-icon.png', AC: '13', speed: '30 ft.', iniative: 0, stats: [17, 13, 13, 11, 9, 10] }
         },
-        scrollCoverClass: 'scrollCover'
+        scrollCoverClass: 'scrollCover',
+        selectedStatBlock: null, editOpen: false
     };
 
     // Maybe move api access methods into the api class
@@ -76,7 +78,7 @@ class App extends React.Component {
 
         for (let i = 0; i < characters.length; i++) {
             const statBlock = (
-                <StatBlockBase key={i} index={i} data={characters[i]} handleRemoveStatBlock={this.handleRemoveStatBlock} handleStatBlockUpdate={this.handleStatBlockUpdate} >
+                <StatBlockBase key={i} index={i} data={characters[i]} handleRemoveStatBlock={this.handleRemoveStatBlock} handleStatBlockUpdate={this.handleStatBlockUpdate} onEdit={this.handleClickEdit} >
                     {includeActions ? <StatBlockActions data={characters[i]} /> : <></>}
                 </StatBlockBase>
             )
@@ -168,6 +170,14 @@ class App extends React.Component {
         }, 500);
     }
 
+    handleClickEdit = (statBlock) => {
+        this.setState({selectedStatBlock: statBlock}, this.toggleModal());
+    }
+
+    toggleModal = () => {
+        this.setState({ editOpen: !this.state.editOpen });
+    }
+
     handleAddStatBlock = (ev) => {
 
     }
@@ -212,6 +222,7 @@ class App extends React.Component {
                     <Icon className='addStatBlock back circle huge'></Icon>
                     <Icon className='addStatBlock front plus circle huge'></Icon>
                 </div>
+                <StatBlockModal open={this.state.editOpen} toggleOpen={this.toggleModal} statBlock={this.state.selectedStatBlock} />
             </Container>
         )
     };

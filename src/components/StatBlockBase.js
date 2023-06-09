@@ -18,6 +18,10 @@ const StatBlockBase = (props) => {
         )
     });
 
+    const onClickEdit = () => {
+        props.onEdit(statBlock);
+    }
+
     const onClickX = (ev) => {
         props.handleRemoveStatBlock(props.data.id)
     }
@@ -37,6 +41,7 @@ const StatBlockBase = (props) => {
     return (
         <Card className='statBlockCard' data-id={props.data.id}>
             <Icon className='absRight' style={{ top: '0.15em' }} onClick={onClickX} link name='cancel' />
+            <Icon onClick={onClickEdit} className='absLeft' link name='edit outline' />
             <Card.Content>
                 <Card.Header>{statBlock.name}</Card.Header>
                 <Card.Meta>
