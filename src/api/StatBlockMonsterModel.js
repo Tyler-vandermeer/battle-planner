@@ -1,9 +1,10 @@
 import ContentLine from '../components/ContentLine';
 import StatBlock from './StatBlockModel';
+import * as Constants from '../Helpers/Constants';
 
 export default class StatBlockMonsterModel extends StatBlock {
     constructor(id, statBlock) {
-        super(id, statBlock, 'monster');
+        super(id, statBlock, Constants.StatBlockTypes.monster);
         statBlock && this.init(statBlock);
     }
 

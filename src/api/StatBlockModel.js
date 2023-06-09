@@ -10,11 +10,11 @@ export default class StatBlock {
     }
 
     getSenses() {
-        return this.senses.map((v) => `${v.name} ${v.value}`).join(', ');
+        return this.senses ? this.senses.map((v) => `${v.name} ${v.value}`).join(', ') : '';
     }
 
     getMovement() {
-        return this.movement.map((v) => <ContentLine key={v.name} label={v.name} value={v.value} />);
+        return this.movement ? this.movement.map((v) => <ContentLine key={v.name} label={v.name} value={v.value} />) : '';
     }
 
     init(statBlock) {

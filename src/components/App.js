@@ -4,7 +4,6 @@ import dnd5e from '../api/dnd5e';
 import StatBlockMonsterModel from '../api/StatBlockMonsterModel';
 import StatBlockModel from '../api/StatBlockModel';
 import * as Constants from '../Helpers/Constants';
-import Player from './Player';
 import SearchBar from './SearchBar';
 import StatBlockActions from './StatBlockActions';
 import StatBlockBase from './StatBlockBase';
@@ -12,11 +11,7 @@ import StatBlockModal from './StatBlockModal';
 
 class App extends React.Component {
     state = {
-        statBlocks: [], searchOptions: [], players: {
-            Rohkume: { name: 'Rohkume', portrait: 'half-orc-icon.png', AC: '17', speed: '30 ft.', iniative: 0, stats: [16, 13, 16, 12, 17, 9] },
-            Faen: { name: 'Faen', portrait: 'elf-icon.png', AC: '11', speed: '35 ft.', iniative: 0, stats: [9, 13, 12, 13, 16, 16] },
-            Ash: { name: 'Ash', portrait: 'dragonborn-icon.png', AC: '13', speed: '30 ft.', iniative: 0, stats: [17, 13, 13, 11, 9, 10] }
-        },
+        statBlocks: [], searchOptions: [],
         scrollCoverClass: 'scrollCover',
         selectedStatBlock: new StatBlockModel(-1, null, 'new'), editOpen: false
     };
@@ -26,7 +21,11 @@ class App extends React.Component {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
         const monster = response.data;
 
-        const statBlock = new StatBlockMonsterModel(this.getMonsterIndex(), monster);
+        const statBlock = new StatBlockMonsterModel(this.getStatBlockId(), monster);
+        this.addStatBlock(statBlock);
+    }
+
+    addStatBlock = (statBlock) => {
 
         this.setState({ statBlocks: [{ id: statBlock.id, statBlock: statBlock }, ...this.state.statBlocks] }
             , this.updateLocalStorage);
@@ -36,7 +35,7 @@ class App extends React.Component {
         localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.statBlocks))
     }
 
-    getMonsterIndex = () => {
+    getStatBlockId = () => {
         let ids = this.state.statBlocks.map(v => v.id);
         let newId = Math.max(...ids) + 1;
         return ids.length === 0 ? 0 : newId;
@@ -66,7 +65,7 @@ class App extends React.Component {
                 assignedStatBlocks.push({ id: statBlock.id, statBlock: sb });
             }
 
-            this.setState({ statBlocks: assignedStatBlocks })
+            this.setState({ statBlocks: assignedStatBlocks });
         }
     }
 
@@ -76,7 +75,7 @@ class App extends React.Component {
     }
 
     // This could probably be moved to a separate stat block grid component
-    statBlocks = (characters, includeActions = true) => {
+    statBlocks = (statBlocks) => {
         //Add logic to order by the statblock type
         const grid = {
             c1: [],
@@ -84,10 +83,10 @@ class App extends React.Component {
             c3: []
         };
 
-        for (let i = 0; i < characters.length; i++) {
+        for (let i = 0; i < statBlocks.length; i++) {
             const statBlock = (
-                <StatBlockBase key={i} index={i} data={characters[i]} handleRemoveStatBlock={this.handleRemoveStatBlock} handleStatBlockUpdate={this.handleStatBlockUpdate} onEdit={this.handleClickEdit} >
-                    {includeActions ? <StatBlockActions data={characters[i]} /> : <></>}
+                <StatBlockBase key={i} index={i} data={statBlocks[i]} handleRemoveStatBlock={this.handleRemoveStatBlock} handleStatBlockUpdate={this.handleStatBlockUpdate} onEdit={this.handleClickEdit} >
+                    {statBlocks[i].statBlock.type === Constants.StatBlockTypes.monster ? <StatBlockActions data={statBlocks[i]} /> : <></>}
                 </StatBlockBase>
             )
 
@@ -129,13 +128,7 @@ class App extends React.Component {
     }
 
     iniativeOrder = () => {
-        const players = this.state.players;
-        var characterList = [
-            ...this.state.statBlocks.map((v) => { return { name: v.statBlock.name, iniative: v.statBlock.iniative, index: v.id } }),
-            { name: players.Rohkume.name, iniative: players.Rohkume.iniative, index: players.Rohkume.name },
-            { name: players.Faen.name, iniative: players.Faen.iniative, index: players.Faen.name },
-            { name: players.Ash.name, iniative: players.Ash.iniative, index: players.Ash.name }
-        ];
+        var characterList = [...this.state.statBlocks.map((v) => { return { name: v.statBlock.name, iniative: v.statBlock.iniative, index: v.id } })];
 
         characterList.sort((a, b) => b.iniative - a.iniative);
 
@@ -179,7 +172,7 @@ class App extends React.Component {
     }
 
     handleClickEdit = (statBlock) => {
-        this.setState({selectedStatBlock: statBlock}, this.toggleModal());
+        this.setState({ selectedStatBlock: statBlock }, this.toggleModal());
     }
 
     toggleModal = () => {
@@ -187,7 +180,17 @@ class App extends React.Component {
     }
 
     handleAddStatBlock = (ev) => {
-        this.setState({selectedStatBlock: new StatBlockModel(-1, null, 'new')}, this.toggleModal());
+        this.setState({ selectedStatBlock: new StatBlockModel(-1, null, Constants.StatBlockTypes.default) }, this.toggleModal());
+    }
+
+    handleSaveStatBlock = (statBlock) => {
+        if (statBlock.id === -1) {
+            let id = this.getStatBlockId();
+            statBlock.id = id;
+            this.addStatBlock(statBlock);
+        } else {
+            this.updateLocalStorage();
+        }
     }
 
     // TODO:
@@ -208,11 +211,6 @@ class App extends React.Component {
         return (
             <Container textAlign='center' fluid>
                 <Header as='h2'>Battle Tracker</Header>
-                {/* <Card.Group centered>
-                    <Player {...this.state.players.Rohkume} updateIniative={this.updatePlayerIniative} />
-                    <Player {...this.state.players.Faen} updateIniative={this.updatePlayerIniative} />
-                    <Player {...this.state.players.Ash} updateIniative={this.updatePlayerIniative} />
-                </Card.Group> */}
                 <Divider />
                 <div style={{ position: 'relative' }}>
                     <Container className='iniativeContainer' onScroll={this.handleHideIniative} onMouseMove={this.handleHideIniative}>
@@ -230,7 +228,7 @@ class App extends React.Component {
                     <Icon className='addStatBlock back circle huge'></Icon>
                     <Icon className='addStatBlock front plus circle huge'></Icon>
                 </div>
-                <StatBlockModal open={this.state.editOpen} toggleOpen={this.toggleModal} statBlock={this.state.selectedStatBlock} />
+                <StatBlockModal open={this.state.editOpen} toggleOpen={this.toggleModal} statBlock={this.state.selectedStatBlock} save={this.handleSaveStatBlock} />
             </Container>
         )
     };

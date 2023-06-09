@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Icon, Form, Button, Grid } from 'semantic-ui-react';
+import { isNullOrEmpty } from '../Helpers/Helpers'
 
-const StatBlockModal = ({ open, toggleOpen, statBlock }) => {
+const StatBlockModal = ({ open, toggleOpen, statBlock, save }) => {
     const [localStatBlock, setLocalStatBlock] = useState(statBlock);
 
     // TODO add way to modify speed
@@ -29,6 +30,7 @@ const StatBlockModal = ({ open, toggleOpen, statBlock }) => {
     const onSaveChanges = (ev) => {
         ev.preventDefault();
         statBlock.updateProperties(localStatBlock);
+        save(statBlock);
         toggleOpen();
     }
 
@@ -51,7 +53,7 @@ const StatBlockModal = ({ open, toggleOpen, statBlock }) => {
             closeOnEscape={true}
         >
             <Icon className='absRight' style={{ top: '0.15em' }} onClick={() => toggleOpen()} link name='cancel' />
-            <Modal.Header>{localStatBlock.name ?? 'New Stat Block'}</Modal.Header>
+            <Modal.Header>{isNullOrEmpty(localStatBlock.name) ? 'New Stat Block' : localStatBlock.name}</Modal.Header>
             <Modal.Content>
                 <Form>
                     <Grid columns={2}>
@@ -69,6 +71,8 @@ const StatBlockModal = ({ open, toggleOpen, statBlock }) => {
                                 </Form.Field>
                             </Grid.Column>
                         </Grid.Row>
+                    </Grid>
+                    <Grid columns={3}>
                         <Grid.Row>
                             <Grid.Column>
                                 <Form.Field>
