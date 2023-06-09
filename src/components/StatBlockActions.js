@@ -4,14 +4,14 @@ import { Card, Divider, Header, Icon } from 'semantic-ui-react';
 import ContentLine from './ContentLine';
 
 const StatBlockActions = (props) => {
-    const monster = props.data.monster;
+    const statBlock = props.data.statBlock;
 
     const [rotate, setRotate] = useState(false);
 
-    const proficiencies = monster?.getProficiencies() ?? '';
-    const senses = monster?.getSenses() ?? '';
-    const specialAbilities = monster?.getSpecialAbilities() ?? '';
-    const actions = monster?.getActions() ?? '';
+    const proficiencies = statBlock?.getProficiencies() ?? '';
+    const senses = statBlock?.getSenses() ?? '';
+    const specialAbilities = statBlock?.getSpecialAbilities() ?? '';
+    const actions = statBlock?.getActions() ?? '';
 
     const onExpandClick = (ev) => setRotate(p => !p);
 
@@ -21,8 +21,8 @@ const StatBlockActions = (props) => {
                 <Card.Content>
                     <ContentLine label="Skills" value={proficiencies} />
                     <ContentLine label="Senses" value={senses} />
-                    <ContentLine label="Languages" value={monster.languages} />
-                    <ContentLine label="Challenge" value={`${monster.challengeRating} (${monster.xp} XP)`} />
+                    <ContentLine label="Languages" value={statBlock.languages} />
+                    <ContentLine label="Challenge" value={`${statBlock.challengeRating} (${statBlock.xp} XP)`} />
                 </Card.Content>
                 <Card.Content>
                     {specialAbilities}

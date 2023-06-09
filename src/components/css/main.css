@@ -1,4 +1,4 @@
-.monsterCard {
+.statBlockCard {
     width: 100% !important;
 }
 
@@ -56,10 +56,6 @@ div.healthBar>div {
 
 .margin0 {
     margin: 0 !important;
-}
-
-.monsterMeta {
-    display: inline-block;
 }
 
 .editArea {
@@ -123,7 +119,6 @@ div[role="healthWheel"]>div {
     overflow-y: hidden;
     height: max-content;
     padding-top: 0.3em;
-    justify-content: center;
 }
 
 .iniativeCard {
@@ -148,7 +143,6 @@ div[role="healthWheel"]>div {
     transition: all .4s;
     opacity: 1;
 }
-
 
 .scrollCover.hidden {
     opacity: 0;

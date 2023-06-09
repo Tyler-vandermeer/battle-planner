@@ -31,23 +31,23 @@ export default class StatBlockMonsterModel extends StatBlock {
         return this.actions.map(v => <ContentLine key={v.name} className='description' label={v.name} value={v.desc} />)
     }
 
-    init(monster) {
-        this.languages = monster.languages;
-        this.xp = monster.xp;
-        this.conditionImmunities = monster.condition_immunities;
-        this.damageImmunities = monster.damage_immunities;
-        this.damageResistances = monster.damage_resistances;
-        this.damageVulnerabilities = monster.damage_vulnerabilities;
-        this.challengeRating = monster.challenge_rating;
+    init(statBlock) {
+        this.languages = statBlock.languages;
+        this.xp = statBlock.xp;
+        this.conditionImmunities = statBlock.condition_immunities;
+        this.damageImmunities = statBlock.damage_immunities;
+        this.damageResistances = statBlock.damage_resistances;
+        this.damageVulnerabilities = statBlock.damage_vulnerabilities;
+        this.challengeRating = statBlock.challenge_rating;
 
-        this.senses = this.getNameValueList(monster.senses);
-        this.setProficienciesList(monster);
-        this.specialAbilities = this.getAbilities(monster.special_abilities);
-        this.actions = this.getAbilities(monster.actions);
-        this.legendaryActions = this.getAbilities(monster.legendary_actions);
-        this.reactions = this.getAbilities(monster.reactions);
+        this.senses = this.getNameValueList(statBlock.senses);
+        this.setProficienciesList(statBlock);
+        this.specialAbilities = this.getAbilities(statBlock.special_abilities);
+        this.actions = this.getAbilities(statBlock.actions);
+        this.legendaryActions = this.getAbilities(statBlock.legendary_actions);
+        this.reactions = this.getAbilities(statBlock.reactions);
 
-        super.init(monster);
+        super.init(statBlock);
     }
 
     setProficienciesList(monster) {
