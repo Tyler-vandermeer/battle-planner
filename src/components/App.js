@@ -1,20 +1,19 @@
 import React from 'react';
-import { Container, Header, Grid, Card, Divider } from 'semantic-ui-react';
-import Monster from './Monster';
-import SearchBar from './SearchBar';
+import { Card, Container, Divider, Grid, Header, Icon } from 'semantic-ui-react';
 import dnd5e from '../api/dnd5e';
-import Player from './Player';
-import MonsterModel from '../api/MonsterModel';
+import StatBlockMonsterModel from '../api/StatBlockMonsterModel';
+import StatBlockModel from '../api/StatBlockModel';
 import * as Constants from '../Helpers/Constants';
+import SearchBar from './SearchBar';
+import StatBlockActions from './StatBlockActions';
+import StatBlockBase from './StatBlockBase';
+import StatBlockModal from './StatBlockModal';
 
 class App extends React.Component {
     state = {
-        monsters: [], searchOptions: [], players: {
-            Rohkume: { name: 'Rohkume', portrait: 'half-orc-icon.png', AC: '17', speed: '30 ft.', iniative: 0, stats: [16, 13, 16, 12, 17, 9] },
-            Faen: { name: 'Faen', portrait: 'elf-icon.png', AC: '11', speed: '35 ft.', iniative: 0, stats: [9, 13, 12, 13, 16, 16] },
-            Ash: { name: 'Ash', portrait: 'dragonborn-icon.png', AC: '13', speed: '30 ft.', iniative: 0, stats: [17, 13, 13, 11, 9, 10] }
-        },
-        scrollCoverClass: 'scrollCover'
+        statBlocks: [], searchOptions: [],
+        scrollCoverClass: 'scrollCover',
+        selectedStatBlock: new StatBlockModel(-1, null, 'new'), editOpen: false
     };
 
     // Maybe move api access methods into the api class
@@ -22,14 +21,24 @@ class App extends React.Component {
         const response = await dnd5e.get(`/monsters/${monsterName}`);
         const monster = response.data;
 
-        const monsterModel = new MonsterModel(this.getMonsterIndex(monster.index), monster);
-
-        this.setState({ monsters: [{ id: monsterModel.id, monster: monsterModel }, ...this.state.monsters] }
-            , () => localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.monsters)));
+        const statBlock = new StatBlockMonsterModel(this.getStatBlockId(), monster);
+        this.addStatBlock(statBlock);
     }
 
-    getMonsterIndex = (monsterIndex) => {
-        return monsterIndex + this.state.monsters.filter(x => x.monster.index === monsterIndex).length;
+    addStatBlock = (statBlock) => {
+
+        this.setState({ statBlocks: [{ id: statBlock.id, statBlock: statBlock }, ...this.state.statBlocks] }
+            , this.updateLocalStorage);
+    }
+
+    updateLocalStorage = () => {
+        localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.statBlocks))
+    }
+
+    getStatBlockId = () => {
+        let ids = this.state.statBlocks.map(v => v.id);
+        let newId = Math.max(...ids) + 1;
+        return ids.length === 0 ? 0 : newId;
     }
 
     loadMonsters = async () => {
@@ -38,24 +47,25 @@ class App extends React.Component {
     }
 
     init = async () => {
-        const existingMonsters = JSON.parse(localStorage.getItem(Constants.LocalStorageKey));
+        const existingStatBlocks = JSON.parse(localStorage.getItem(Constants.LocalStorageKey));
 
         if (process.env.NODE_ENV !== 'production') {
-            if (!existingMonsters || existingMonsters.length === 0) {
-                await this.addMonster('aboleth');
+            if (!existingStatBlocks || existingStatBlocks.length === 0) {
+                await this.addMonster('goblin');
             }
         }
 
-        if (existingMonsters && existingMonsters.length > 0) {
-            const assignedMonsters = [];
+        if (existingStatBlocks && existingStatBlocks.length > 0) {
+            const assignedStatBlocks = [];
 
-            for (var monster of existingMonsters) {
-                const m = new MonsterModel(monster.id);
-                m.updateProperties(monster.monster);
-                assignedMonsters.push({ id: monster.id, monster: m });
+            for (var statBlock of existingStatBlocks) {
+                // Add check for stat Block Type
+                const sb = new StatBlockMonsterModel(statBlock.id);
+                sb.updateProperties(statBlock.statBlock);
+                assignedStatBlocks.push({ id: statBlock.id, statBlock: sb });
             }
 
-            this.setState({ monsters: assignedMonsters })
+            this.setState({ statBlocks: assignedStatBlocks });
         }
     }
 
@@ -64,20 +74,26 @@ class App extends React.Component {
         this.loadMonsters();
     }
 
-    // This coul probably be moved to a separate monster grid component
-    monsters = () => {
+    // This could probably be moved to a separate stat block grid component
+    statBlocks = (statBlocks) => {
+        //Add logic to order by the statblock type
         const grid = {
             c1: [],
             c2: [],
             c3: []
         };
 
-        for (let i = 0; i < this.state.monsters.length; i++) {
-            const monster = <Monster key={i} index={i} data={this.state.monsters[i]} handleRemoveMonster={this.handleRemoveMonster} handleMonsterUpdate={this.handleMonsterUpdate} />;
+        for (let i = 0; i < statBlocks.length; i++) {
+            const statBlock = (
+                <StatBlockBase key={i} index={i} data={statBlocks[i]} handleRemoveStatBlock={this.handleRemoveStatBlock} handleStatBlockUpdate={this.handleStatBlockUpdate} onEdit={this.handleClickEdit} >
+                    {statBlocks[i].statBlock.type === Constants.StatBlockTypes.monster ? <StatBlockActions data={statBlocks[i]} /> : <></>}
+                </StatBlockBase>
+            )
+
             switch (i % 3) {
-                case 0: grid.c1.push(monster); break;
-                case 1: grid.c2.push(monster); break;
-                case 2: grid.c3.push(monster); break;
+                case 0: grid.c1.push(statBlock); break;
+                case 1: grid.c2.push(statBlock); break;
+                case 2: grid.c3.push(statBlock); break;
                 default: break;
             }
         }
@@ -112,13 +128,7 @@ class App extends React.Component {
     }
 
     iniativeOrder = () => {
-        const players = this.state.players;
-        var characterList = [
-            ...this.state.monsters.map((v) => { return { name: v.monster.name, iniative: v.monster.iniative, index: v.id } }),
-            { name: players.Rohkume.name, iniative: players.Rohkume.iniative, index: players.Rohkume.name },
-            { name: players.Faen.name, iniative: players.Faen.iniative, index: players.Faen.name },
-            { name: players.Ash.name, iniative: players.Ash.iniative, index: players.Ash.name }
-        ];
+        var characterList = [...this.state.statBlocks.map((v) => { return { name: v.statBlock.name, iniative: v.statBlock.iniative, index: v.id } })];
 
         characterList.sort((a, b) => b.iniative - a.iniative);
 
@@ -137,19 +147,19 @@ class App extends React.Component {
         this.addMonster(monsterName);
     }
 
-    handleRemoveMonster = (id) => {
-        this.setState({ monsters: this.state.monsters.filter(x => x.id !== id) });
+    handleRemoveStatBlock = (id) => {
+        this.setState({ statBlocks: this.state.statBlocks.filter(x => x.id !== id) }, this.updateLocalStorage);
     }
 
-    handleMonsterUpdate = (id, monster) => {
-        const newMonsters = this.state.monsters.map(obj => {
+    handleStatBlockUpdate = (id, statBlock) => {
+        const newStatBlocks = this.state.statBlocks.map(obj => {
             if (obj.id === id) {
-                obj.monster = monster;
+                obj.statBlock = statBlock;
             }
             return obj;
         });
 
-        this.setState({ monsters: newMonsters }, localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.monsters)));
+        this.setState({ statBlocks: newStatBlocks }, localStorage.setItem(Constants.LocalStorageKey, JSON.stringify(this.state.statBlocks)));
     }
 
     showTimeout;
@@ -161,8 +171,31 @@ class App extends React.Component {
         }, 500);
     }
 
+    handleClickEdit = (statBlock) => {
+        this.setState({ selectedStatBlock: statBlock }, this.toggleModal());
+    }
+
+    toggleModal = () => {
+        this.setState({ editOpen: !this.state.editOpen });
+    }
+
+    handleAddStatBlock = (ev) => {
+        this.setState({ selectedStatBlock: new StatBlockModel(-1, null, Constants.StatBlockTypes.default) }, this.toggleModal());
+    }
+
+    handleSaveStatBlock = (statBlock) => {
+        if (statBlock.id === -1) {
+            let id = this.getStatBlockId();
+            statBlock.id = id;
+            this.addStatBlock(statBlock);
+        } else {
+            this.updateLocalStorage();
+        }
+    }
+
     // TODO:
     // Make player cards look like monster cards
+    // AC value changed from api. Maybe change how it's displayed
     // Make iniative editable
     // Add + button in bottom right with option to look up monster or add a custom player/monster (Maybe just do players first)
     // Have a section for players and a section for monsters
@@ -172,18 +205,12 @@ class App extends React.Component {
     // maybe make descriptions of abilities tool tips
     // add tool tips for spells
     // Have some of them be able to be temprary additions (modifiers)
-    // Add desc tooltip for the monster
     // Maybe make it so it can be exported to a json file
 
     render() {
         return (
             <Container textAlign='center' fluid>
                 <Header as='h2'>Battle Tracker</Header>
-                <Card.Group centered>
-                    <Player {...this.state.players.Rohkume} updateIniative={this.updatePlayerIniative} />
-                    <Player {...this.state.players.Faen} updateIniative={this.updatePlayerIniative} />
-                    <Player {...this.state.players.Ash} updateIniative={this.updatePlayerIniative} />
-                </Card.Group>
                 <Divider />
                 <div style={{ position: 'relative' }}>
                     <Container className='iniativeContainer' onScroll={this.handleHideIniative} onMouseMove={this.handleHideIniative}>
@@ -195,8 +222,13 @@ class App extends React.Component {
                 <SearchBar options={this.state.searchOptions} onSubmit={this.handleSearchSubmit} />
                 <br />
                 <Grid relaxed stackable padded columns={3}>
-                    {this.monsters()}
+                    {this.statBlocks(this.state.statBlocks)}
                 </Grid>
+                <div onClick={this.handleAddStatBlock}>
+                    <Icon className='addStatBlock back circle huge'></Icon>
+                    <Icon className='addStatBlock front plus circle huge'></Icon>
+                </div>
+                <StatBlockModal open={this.state.editOpen} toggleOpen={this.toggleModal} statBlock={this.state.selectedStatBlock} save={this.handleSaveStatBlock} />
             </Container>
         )
     };

@@ -1,13 +1,13 @@
-.monsterCard {
+.statBlockCard {
     width: 100% !important;
 }
 
-.monsterTable {
+.statBlockTable {
     border: none !important;
     text-align: center !important;
 }
 
-.monsterTable td {
+.statBlockTable td {
     margin: 0;
     padding: 0.25em 0 !important;
     border: none !important;
@@ -56,10 +56,6 @@ div.healthBar>div {
 
 .margin0 {
     margin: 0 !important;
-}
-
-.monsterMeta {
-    display: inline-block;
 }
 
 .editArea {
@@ -148,7 +144,20 @@ div[role="healthWheel"]>div {
     opacity: 1;
 }
 
-
 .scrollCover.hidden {
     opacity: 0;
+}
+
+.addStatBlock {
+    position: fixed;
+    bottom: 10px;
+    right: 5px;
+}
+
+.addStatBlock.front {
+    color: #21ba45;
+}
+
+.addStatBlock.back {
+    color: white;
 }

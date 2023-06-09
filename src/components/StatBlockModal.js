@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Icon, Form, Button, Grid } from 'semantic-ui-react';
+import { isNullOrEmpty } from '../Helpers/Helpers'
 
-const MonsterModal = ({ open, toggleOpen, monster }) => {
-    const [localMonster, setLocalMonster] = useState(monster);
+const StatBlockModal = ({ open, toggleOpen, statBlock, save }) => {
+    const [localStatBlock, setLocalStatBlock] = useState(statBlock);
+
+    // TODO add way to modify speed
 
     const onChangeProperty = (ev) => {
         const key = ev.target.dataset.key;
         const index = ev.target.dataset.index;
         const value = ev.target.value;
 
-        setLocalMonster((p) => {
+        setLocalStatBlock((p) => {
             if (index !== undefined && index !== null) {
                 p[key][index].value = value;
             } else {
@@ -20,13 +23,18 @@ const MonsterModal = ({ open, toggleOpen, monster }) => {
         });
     }
 
+    useEffect(() => {
+        setLocalStatBlock(statBlock);
+    }, [statBlock]);
+
     const onSaveChanges = (ev) => {
         ev.preventDefault();
-        monster.updateProperties(localMonster);
+        statBlock.updateProperties(localStatBlock);
+        save(statBlock);
         toggleOpen();
     }
 
-    const stats = localMonster.stats.map((v, i) => {
+    const stats = localStatBlock.stats.map((v, i) => {
         return (
             <Grid.Column key={i}>
                 <Form.Field>
@@ -45,7 +53,7 @@ const MonsterModal = ({ open, toggleOpen, monster }) => {
             closeOnEscape={true}
         >
             <Icon className='absRight' style={{ top: '0.15em' }} onClick={() => toggleOpen()} link name='cancel' />
-            <Modal.Header>{localMonster.name}</Modal.Header>
+            <Modal.Header>{isNullOrEmpty(localStatBlock.name) ? 'New Stat Block' : localStatBlock.name}</Modal.Header>
             <Modal.Content>
                 <Form>
                     <Grid columns={2}>
@@ -53,27 +61,35 @@ const MonsterModal = ({ open, toggleOpen, monster }) => {
                             <Grid.Column>
                                 <Form.Field>
                                     <label htmlFor='name'>Name:</label>
-                                    <input id='name' type='text' data-key='name' value={localMonster.name} onChange={onChangeProperty} />
+                                    <input id='name' type='text' data-key='name' value={localStatBlock?.name} onChange={onChangeProperty} />
                                 </Form.Field>
                             </Grid.Column>
                             <Grid.Column>
                                 <Form.Field>
                                     <label htmlFor='desc'>Description:</label>
-                                    <Form.TextArea type='textarea' data-key='desc' value={localMonster.desc} onChange={onChangeProperty} />
+                                    <Form.TextArea type='textarea' data-key='desc' value={localStatBlock.desc} onChange={onChangeProperty} />
                                 </Form.Field>
                             </Grid.Column>
                         </Grid.Row>
+                    </Grid>
+                    <Grid columns={3}>
                         <Grid.Row>
                             <Grid.Column>
                                 <Form.Field>
                                     <label htmlFor='maxHp'>Max HP:</label>
-                                    <input id='maxHp' type='number' data-key="hp" value={localMonster.hp} onChange={onChangeProperty} />
+                                    <input id='maxHp' type='number' data-key="hp" value={localStatBlock.hp} onChange={onChangeProperty} />
                                 </Form.Field>
                             </Grid.Column>
                             <Grid.Column>
                                 <Form.Field>
                                     <label htmlFor='ac'>AC:</label>
-                                    <input id='ac' type='number' data-key="ac" value={localMonster.ac} onChange={onChangeProperty} />
+                                    <input id='ac' type='number' data-key="ac" value={localStatBlock.ac} onChange={onChangeProperty} />
+                                </Form.Field>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Form.Field>
+                                    <label htmlFor='iniative'>Iniative:</label>
+                                    <input id='iniative' type='number' data-key="iniative" value={localStatBlock.iniative} onChange={onChangeProperty} />
                                 </Form.Field>
                             </Grid.Column>
                         </Grid.Row>
@@ -97,4 +113,4 @@ const MonsterModal = ({ open, toggleOpen, monster }) => {
     );
 };
 
-export default MonsterModal;
+export default StatBlockModal;
