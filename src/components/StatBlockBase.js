@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Dropdown, Icon, Menu, Progress, Table } from 'semantic-ui-react';
+import { Button, Card, Dropdown, Progress, Table } from 'semantic-ui-react';
 import ContentLine from './ContentLine';
 
 const StatBlockBase = (props) => {
@@ -26,6 +26,10 @@ const StatBlockBase = (props) => {
         props.handleRemoveStatBlock(props.data.id)
     }
 
+    const onDuplicate = () => {
+        props.onDuplicate(statBlock);
+    }
+
     const handleHealthChange = (ev) => {
         setCurrentHealth((previous) => {
             const newValue = previous + ~~ev.target.value;
@@ -45,9 +49,11 @@ const StatBlockBase = (props) => {
                     {statBlock.name}
                     <Dropdown icon='ellipsis vertical' className='absRight' style={{ position: 'absolute' }} direction='left' pointing='top right' inline >
                         <Dropdown.Menu>
-                            <Dropdown.Item text='Edit' link onClick={onClickEdit} />
+                            <Dropdown.Item text='Edit' onClick={onClickEdit} />
                             <Dropdown.Divider />
-                            <Dropdown.Item text='Delete' link onClick={onClickX} style={{ color: 'red' }} />
+                            <Dropdown.Item text='Duplicate' onClick={onDuplicate} />
+                            <Dropdown.Divider />
+                            <Dropdown.Item text='Delete' onClick={onClickX} style={{ color: 'red' }} />
                         </Dropdown.Menu>
                     </Dropdown>
                 </Card.Header>
