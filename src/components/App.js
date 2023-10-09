@@ -194,7 +194,6 @@ class App extends React.Component {
     }
 
     // TODO:
-    // change edit/delete to an elipse that pulls up a tooltip
     // add a duplicate function
     // Make player cards look like monster cards
     // AC value changed from api. Maybe change how it's displayed

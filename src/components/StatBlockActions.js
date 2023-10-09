@@ -7,7 +7,7 @@ const StatBlockActions = (props) => {
     const statBlock = props.data.statBlock;
 
     const [rotate, setRotate] = useState(false);
-
+    
     const proficiencies = statBlock?.getProficiencies() ?? '';
     const senses = statBlock?.getSenses() ?? '';
     const specialAbilities = statBlock?.getSpecialAbilities() ?? '';
