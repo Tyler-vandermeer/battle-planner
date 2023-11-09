@@ -26,7 +26,6 @@ class App extends React.Component {
     }
 
     addStatBlock = (statBlock) => {
-
         this.setState({ statBlocks: [{ id: statBlock.id, statBlock: statBlock }, ...this.state.statBlocks] }
             , this.updateLocalStorage);
     }
@@ -85,7 +84,7 @@ class App extends React.Component {
 
         for (let i = 0; i < statBlocks.length; i++) {
             const statBlock = (
-                <StatBlockBase key={i} index={i} data={statBlocks[i]} handleRemoveStatBlock={this.handleRemoveStatBlock} handleStatBlockUpdate={this.handleStatBlockUpdate} onEdit={this.handleClickEdit} >
+                <StatBlockBase key={i} index={i} data={statBlocks[i]} handleRemoveStatBlock={this.handleRemoveStatBlock} handleStatBlockUpdate={this.handleStatBlockUpdate} onEdit={this.handleClickEdit} onDuplicate={this.handleClickDuplicate} >
                     {statBlocks[i].statBlock.type === Constants.StatBlockTypes.monster ? <StatBlockActions data={statBlocks[i]} /> : <></>}
                 </StatBlockBase>
             )
@@ -175,6 +174,20 @@ class App extends React.Component {
         this.setState({ selectedStatBlock: statBlock }, this.toggleModal());
     }
 
+    handleClickDuplicate = (statBlock) => {
+        const newId = this.getStatBlockId();
+        
+        const newStatBlock =
+            statBlock.type === Constants.StatBlockTypes.monster
+                ? new StatBlockMonsterModel(newId)
+                : new StatBlockModel(newId);
+
+        newStatBlock.updateProperties(statBlock);
+        newStatBlock.id = newId;
+
+        this.addStatBlock(newStatBlock);
+    }
+
     toggleModal = () => {
         this.setState({ editOpen: !this.state.editOpen });
     }
@@ -194,6 +207,7 @@ class App extends React.Component {
     }
 
     // TODO:
+    // add a roll initiative button. Both for individual or all stat blocks
     // Make player cards look like monster cards
     // AC value changed from api. Maybe change how it's displayed
     // Make iniative editable

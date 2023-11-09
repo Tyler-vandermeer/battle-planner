@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Icon, Progress, Table } from 'semantic-ui-react';
+import { Button, Card, Dropdown, Progress, Table } from 'semantic-ui-react';
 import ContentLine from './ContentLine';
 
 const StatBlockBase = (props) => {
@@ -26,6 +26,10 @@ const StatBlockBase = (props) => {
         props.handleRemoveStatBlock(props.data.id)
     }
 
+    const onDuplicate = () => {
+        props.onDuplicate(statBlock);
+    }
+
     const handleHealthChange = (ev) => {
         setCurrentHealth((previous) => {
             const newValue = previous + ~~ev.target.value;
@@ -40,10 +44,19 @@ const StatBlockBase = (props) => {
 
     return (
         <Card className='statBlockCard' data-id={props.data.id}>
-            <Icon className='absRight' style={{ top: '0.15em' }} onClick={onClickX} link name='cancel' />
-            <Icon onClick={onClickEdit} className='absLeft' link name='edit outline' />
             <Card.Content>
-                <Card.Header>{statBlock.name}</Card.Header>
+                <Card.Header>
+                    {statBlock.name}
+                    <Dropdown icon='ellipsis vertical' className='absRight' style={{ position: 'absolute' }} direction='left' pointing='top right' inline >
+                        <Dropdown.Menu>
+                            <Dropdown.Item text='Edit' onClick={onClickEdit} />
+                            <Dropdown.Divider />
+                            <Dropdown.Item text='Duplicate' onClick={onDuplicate} />
+                            <Dropdown.Divider />
+                            <Dropdown.Item text='Delete' onClick={onClickX} style={{ color: 'red' }} />
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </Card.Header>
                 <Card.Meta>
                     <pre className='margin0'>{statBlock.desc}</pre>
                 </Card.Meta>

@@ -1,11 +1,12 @@
 
-import { getModifierValue } from '../Helpers/Helpers'
+import { getModifierValue } from '../Helpers/Helpers';
 import ContentLine from '../components/ContentLine';
+import * as Constants from '../Helpers/Constants';
 
 export default class StatBlock {
     constructor(id, statBlock, type) {
         this.id = id;
-        this.type = type;
+        this.type = type ?? Constants.StatBlockTypes.default;
         this.init(statBlock);
     }
 
