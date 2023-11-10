@@ -207,6 +207,7 @@ class App extends React.Component {
     }
 
     // TODO:
+    // Look into why custom blocks hp is a string
     // add a roll initiative button. Both for individual or all stat blocks
     // Make player cards look like monster cards
     // AC value changed from api. Maybe change how it's displayed

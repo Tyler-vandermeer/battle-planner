@@ -32,7 +32,7 @@ const StatBlockBase = (props) => {
 
     const handleHealthChange = (ev) => {
         setCurrentHealth((previous) => {
-            const newValue = previous + ~~ev.target.value;
+            const newValue = parseInt(previous) + ~~ev.target.value;
 
             statBlock.currentHealth = Math.min(Math.max(newValue, 0), statBlock.hp);
 
