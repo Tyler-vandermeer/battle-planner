@@ -208,13 +208,11 @@ class App extends React.Component {
     }
 
     // TODO:
+    // Add ability to save/load a set of stat blocks
     // add a roll initiative button for all stat blocks
     // Make player cards look like monster cards
     // AC value changed from api. Maybe change how it's displayed
-    // Make iniative editable
-    // Add + button in bottom right with option to look up monster or add a custom player/monster (Maybe just do players first)
     // Have a section for players and a section for monsters
-    // Maybe change the mouse events for changing the iniative for players
     // Make the skills & actions look better with a table
     // Add current condition effects to monster
     // maybe make descriptions of abilities tool tips
