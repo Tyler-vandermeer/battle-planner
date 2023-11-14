@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Dropdown, Progress, Table } from 'semantic-ui-react';
 import ContentLine from './ContentLine';
+import { StatNames } from '../Helpers/Constants';
 
 const StatBlockBase = (props) => {
     const statBlock = props.data.statBlock;
 
     const [currentHealth, setCurrentHealth] = useState(statBlock.currentHealth ?? statBlock.hp);
     useEffect(() => { setCurrentHealth(statBlock.currentHealth ?? statBlock.hp) }, [statBlock.currentHealth, statBlock.hp]);
+
+    const [iniative, setIniative] = useState(statBlock.iniative);
+    useEffect(() => { setIniative(statBlock.iniative) }, [statBlock.iniative]);
 
     const movementValues = statBlock.getMovement();
 
@@ -28,6 +32,14 @@ const StatBlockBase = (props) => {
 
     const onDuplicate = () => {
         props.onDuplicate(statBlock);
+    }
+
+    const handleInitiativeClick = () => {
+        setIniative((p) => {
+            statBlock.iniative = Math.ceil(Math.random() * 20) + statBlock.getStatModifier(StatNames.dexterity);
+            props.handleStatBlockUpdate(props.data.id, statBlock);
+            return statBlock.iniative;
+        });
     }
 
     const handleHealthChange = (ev) => {
@@ -78,7 +90,7 @@ const StatBlockBase = (props) => {
                                 <ContentLine label="AC" value={statBlock.ac} />
                             </Table.Cell>
                             <Table.Cell>
-                                <ContentLine label="Iniative" value={statBlock.iniative} />
+                                <div onClick={handleInitiativeClick}><b>Iniative:</b> {iniative}</div>
                             </Table.Cell>
                             <Table.Cell>
                                 {movementValues}

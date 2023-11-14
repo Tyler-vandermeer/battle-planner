@@ -143,7 +143,8 @@ class App extends React.Component {
     }
 
     handleSearchSubmit = (monsterName) => {
-        this.addMonster(monsterName);
+        if (monsterName.length > 0)
+            this.addMonster(monsterName);
     }
 
     handleRemoveStatBlock = (id) => {
@@ -207,7 +208,7 @@ class App extends React.Component {
     }
 
     // TODO:
-    // add a roll initiative button. Both for individual or all stat blocks
+    // add a roll initiative button for all stat blocks
     // Make player cards look like monster cards
     // AC value changed from api. Maybe change how it's displayed
     // Make iniative editable

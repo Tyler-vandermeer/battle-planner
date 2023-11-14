@@ -51,6 +51,10 @@ export default class StatBlock {
         }
     }
 
+    getStatModifier(statName) {
+        return this.stats.filter(x => x.name === statName)[0].modifier;
+    }
+
     getNameValueList(property, isValueNumber = false) {
         const nameValues = [];
         for (let k in property) {
