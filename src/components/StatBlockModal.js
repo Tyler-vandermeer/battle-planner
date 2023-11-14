@@ -10,7 +10,10 @@ const StatBlockModal = ({ open, toggleOpen, statBlock, save }) => {
     const onChangeProperty = (ev) => {
         const key = ev.target.dataset.key;
         const index = ev.target.dataset.index;
-        const value = ev.target.value;
+        let value = ev.target.value;
+        
+        if (ev.target.type === 'number')
+            value = parseInt(value);
 
         setLocalStatBlock((p) => {
             if (index !== undefined && index !== null) {
