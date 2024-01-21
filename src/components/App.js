@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Container, Divider, Grid, Header, Icon } from 'semantic-ui-react';
+import { Button, Card, Container, Divider, Grid, Header, Icon, Sidebar, SidebarPushable, SidebarPusher, Menu } from 'semantic-ui-react';
 import dnd5e from '../api/dnd5e';
 import StatBlockMonsterModel from '../api/StatBlockMonsterModel';
 import StatBlockModel from '../api/StatBlockModel';
@@ -13,7 +13,9 @@ class App extends React.Component {
     state = {
         statBlocks: [], searchOptions: [],
         scrollCoverClass: 'scrollCover',
-        selectedStatBlock: new StatBlockModel(-1, null, 'new'), editOpen: false
+        selectedStatBlock: new StatBlockModel(-1, null, 'new'),
+        editOpen: false,
+        showSidebar: false
     };
 
     // Maybe move api access methods into the api class
@@ -177,7 +179,7 @@ class App extends React.Component {
 
     handleClickDuplicate = (statBlock) => {
         const newId = this.getStatBlockId();
-        
+
         const newStatBlock =
             statBlock.type === Constants.StatBlockTypes.monster
                 ? new StatBlockMonsterModel(newId)
@@ -207,6 +209,10 @@ class App extends React.Component {
         }
     }
 
+    handleOpenSidebar = (ev) => {
+        this.setState({ showSidebar: !this.state.showSidebar });
+    }
+
     // TODO:
     // Add ability to save/load a set of stat blocks
     // add a roll initiative button for all stat blocks
@@ -222,27 +228,36 @@ class App extends React.Component {
 
     render() {
         return (
-            <Container textAlign='center' fluid>
-                <Header as='h2'>Battle Tracker</Header>
-                <Divider />
-                <div style={{ position: 'relative' }}>
-                    <Container className='iniativeContainer' onScroll={this.handleHideIniative} onMouseMove={this.handleHideIniative}>
-                        {this.iniativeOrder()}
-                    </Container>
-                    <div className={this.state.scrollCoverClass} />
-                </div>
-                <Divider />
-                <SearchBar options={this.state.searchOptions} onSubmit={this.handleSearchSubmit} />
-                <br />
-                <Grid relaxed stackable padded columns={3}>
-                    {this.statBlocks(this.state.statBlocks)}
-                </Grid>
-                <div onClick={this.handleAddStatBlock}>
-                    <Icon className='addStatBlock back circle huge'></Icon>
-                    <Icon className='addStatBlock front plus circle huge'></Icon>
-                </div>
-                <StatBlockModal open={this.state.editOpen} toggleOpen={this.toggleModal} statBlock={this.state.selectedStatBlock} save={this.handleSaveStatBlock} />
-            </Container>
+            <div className='mainContainer'>
+                <SidebarPushable>
+                    <Sidebar as={Menu} vertical animation='overlay' direction='right' visible={this.state.showSidebar}>
+                        <h2>Test</h2>
+                    </Sidebar>
+
+                    <SidebarPusher dimmed={this.state.showSidebar}>
+                        <Button className='absLeft' onClick={this.handleOpenSidebar}>Test</Button>
+                        <Header as='h2'>Battle Tracker</Header>
+                        <Divider />
+                        <div style={{ position: 'relative' }}>
+                            <Container className='iniativeContainer' onScroll={this.handleHideIniative} onMouseMove={this.handleHideIniative}>
+                                {this.iniativeOrder()}
+                            </Container>
+                            <div className={this.state.scrollCoverClass} />
+                        </div>
+                        <Divider />
+                        <SearchBar options={this.state.searchOptions} onSubmit={this.handleSearchSubmit} />
+                        <br />
+                        <Grid relaxed stackable padded columns={3}>
+                            {this.statBlocks(this.state.statBlocks)}
+                        </Grid>
+                        <div onClick={this.handleAddStatBlock}>
+                            <Icon className='addStatBlock back circle huge'></Icon>
+                            <Icon className='addStatBlock front plus circle huge'></Icon>
+                        </div>
+                        <StatBlockModal open={this.state.editOpen} toggleOpen={this.toggleModal} statBlock={this.state.selectedStatBlock} save={this.handleSaveStatBlock} />
+                    </SidebarPusher>
+                </SidebarPushable>
+            </div>
         )
     };
 }
